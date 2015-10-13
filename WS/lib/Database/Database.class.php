@@ -38,7 +38,11 @@ abstract class Database{
         $connectionString = sprintf("%s:host=%s;dbname=%s", $dbType, $hostname, $dbName);
 
         try {
-            $this->PDO = new \PDO($connectionString, $username, $password, array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION));
+            $this->PDO = new \PDO(
+                                $connectionString,
+                                $username,
+                                $password,
+                                array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION));
         }
         catch(\PDOException $ex){
             echo "Connection error: " . $ex->getMessage();
@@ -160,6 +164,11 @@ abstract class Database{
 
         return 0;
 
+    }
+
+    public static function changeEncoding($input){
+        $input = mb_convert_encoding($input, "utf-8");
+        return $input;
     }
 
     /**

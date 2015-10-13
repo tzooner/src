@@ -31,3 +31,4 @@ try {
     echo json_encode(Array('error' => $e->getMessage()));
 
 }
+?>

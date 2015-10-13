@@ -44,13 +44,13 @@ abstract class REST{
      */
     protected $File;
 
-    protected $AllowedHttpMethod = array("GET", "POST", "DELETE", "UPDATE");
+    protected $AllowedHttpMethod = array("GET", "POST", "DELETE", "PUT");
 
     public function __construct($request, $method){
 
-        header("Access-Control-Allow-Orgin: *");
+        header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Methods: *");
-        header("Content-Type: " . Constants::DEFAULT_RESPONSE_FORMAT);
+        header("Content-Type: " . Constants::DEFAULT_RESPONSE_FORMAT . "; charset=utf-8");
 
         $this->Parameters = explode('/', rtrim($request, '/'));
         $this->Endpoint = array_shift($this->Parameters);

@@ -12,26 +12,72 @@
 
 namespace lib\RESTAPI;
 
-use lib\Database\Database;
+use lib\Constants;
 use lib\Database\DatabaseFactory;
+use lib\Entity\Response;
+use lib\Source\Powerplant;
+use lib\Source\PowerplantData;
 
 class Router extends REST{
 
     public function __construct($request, $method){
         parent::__construct($request, $method);
+
     }
 
+    public function data(){
 
-    public function example() {
+        $Response = new Response();
+        $Response->setErrorCode(Constants::RESPONSE_CODE_NO_ERROR);
 
-//        echo $this->HttpMethod . "\n";
-//        echo $this->Endpoint . "\n";
-//        echo $this->Verb . "\n";
-//        print_r($this->Parameters);
+        $PowerPlantData = new PowerplantData();
 
-        $result = json_encode(@DatabaseFactory::create()->getAllRows("select * from testik"));
+        if(empty($this->Parameters)){
 
-        return json_encode($this->HttpMethod);
+            $result = $PowerPlantData->getAllData();
+            $Response->setData($result);
+            $Response->setReturnedRows(count($result));
+
+        }
+        else{
+
+            $powerplantID = $this->Parameters[0];
+
+            $result = $PowerPlantData->getPowerplantData($powerplantID);
+            $Response->setData($result);
+            $Response->setReturnedRows(count($result));
+
+        }
+
+        return $Response->getResponseJson();
+
+    }
+    public function powerplant(){
+
+        $Response = new Response();
+        $Response->setErrorCode(Constants::RESPONSE_CODE_NO_ERROR);
+
+        $PowerPlant = new Powerplant();
+
+        if(empty($this->Parameters)){
+
+            $result = $PowerPlant->getAllPowerPlants();
+            $Response->setData($result);
+            $Response->setReturnedRows(count($result));
+
+        }
+        else{
+
+            $powerplantID = $this->Parameters[0];
+
+            $result = $PowerPlant->getPowerPlant($powerplantID);
+            $Response->setData($result);
+            $Response->setReturnedRows(count($result));
+
+        }
+
+        return $Response->getResponseJson();
+
     }
 
 }
