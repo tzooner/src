@@ -17,4 +17,7 @@ class Config
     const DB_Password = "";
     const DB_Type = "mysql";
 
+    const FILE_PATH = "./IMPORT.txt";
+    const FILE_SEPARATOR = ";";
+
 }

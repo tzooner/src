@@ -25,9 +25,7 @@ class PowerplantData
 
         $query = "
               SELECT
-                PD.PowerPlantDataID,
-                PD.Power_Actual,
-                PD.CreateDate,
+                PD.*,
                 P.PowerPlantID,
                 P.PowerPlantName
               FROM PowerplantData PD
@@ -56,9 +54,7 @@ class PowerplantData
 
         $query = sprintf("
               SELECT
-                PD.PowerPlantDataID,
-                PD.Power_Actual,
-                PD.CreateDate,
+                PD.*,
                 P.PowerPlantID,
                 P.PowerPlantName
               FROM PowerplantData PD
@@ -74,6 +70,11 @@ class PowerplantData
             return array();
         }
 
+    }
+
+    public function saveImportLog($importedRows, $errors){
+        // Log je uspesny, pokud nenastanou chyby
+        $isSuccess = empty($errors);
     }
 
 }

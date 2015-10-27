@@ -35,9 +35,13 @@ class Powerplant
 
         $query = sprintf("SELECT
                           *
-                          FROM PowerPlant P INNER JOIN Facility F on P.FacilityID_FK = F.FacilityID
-                          WHERE P.PowerPlantID
-                          ORDER BY P.PowerPlantName
+                          FROM
+                            PowerPlant P
+                          INNER JOIN Facility F on P.FacilityID_FK = F.FacilityID
+                          WHERE
+                            P.PowerPlantID = %d
+                          ORDER BY
+                            P.PowerPlantName
                           ", $powerPlantID);
 
         try {

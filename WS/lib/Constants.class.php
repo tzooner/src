@@ -22,5 +22,10 @@ class Constants
     // Po pridani nazvu prefixu budou dostupna vsechna data s timto prefixem
     const DATA_PREFIXES = array("power", "temperature");
 
+    // Datove typy importovanych hodnot
+    const IMPORT_DATA_TYPE_INT = "int";
+    const IMPORT_DATA_TYPE_FLOAT = "int";
+    const IMPORT_DATA_TYPE_BOOL = "bool";
+    const IMPORT_DATA_TYPE_STRING = "string";
 
 }

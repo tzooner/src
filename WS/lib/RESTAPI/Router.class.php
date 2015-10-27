@@ -13,10 +13,9 @@
 namespace lib\RESTAPI;
 
 use lib\Constants;
-use lib\Database\DatabaseFactory;
 use lib\Entity\Response;
+use lib\Script\PowerPlantDataScript;
 use lib\Source\Powerplant;
-use lib\Source\PowerplantData;
 
 class Router extends REST{
 
@@ -27,29 +26,15 @@ class Router extends REST{
 
     public function data(){
 
-        $Response = new Response();
-        $Response->setErrorCode(Constants::RESPONSE_CODE_NO_ERROR);
-
-        $PowerPlantData = new PowerplantData();
-
-        if(empty($this->Parameters)){
-
-            $result = $PowerPlantData->getAllData();
-            $Response->setData($result);
-            $Response->setReturnedRows(count($result));
-
+        $Script = new PowerPlantDataScript();
+        switch(strtolower($this->HttpMethod)){
+            case "get":
+                return $Script->processMethodGET($this->Parameters);
+                break;
+            case "put":
+                $Script->processMethodPUT($this->Parameters, $this->File);
+                break;
         }
-        else{
-
-            $powerplantID = $this->Parameters[0];
-
-            $result = $PowerPlantData->getPowerplantData($powerplantID);
-            $Response->setData($result);
-            $Response->setReturnedRows(count($result));
-
-        }
-
-        return $Response->getResponseJson();
 
     }
     public function powerplant(){
