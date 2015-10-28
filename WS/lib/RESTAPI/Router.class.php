@@ -32,7 +32,7 @@ class Router extends REST{
                 return $Script->processMethodGET($this->Parameters);
                 break;
             case "put":
-                $Script->processMethodPUT($this->Parameters, $this->File);
+                return $Script->processMethodPUT($this->Parameters, $this->File);
                 break;
         }
 

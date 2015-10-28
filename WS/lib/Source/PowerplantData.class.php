@@ -9,6 +9,7 @@
 
 namespace lib\Source;
 
+use lib\Database\Database;
 use lib\Database\DatabaseFactory;
 
 class PowerplantData
@@ -72,9 +73,15 @@ class PowerplantData
 
     }
 
-    public function saveImportLog($importedRows, $errors){
-        // Log je uspesny, pokud nenastanou chyby
-        $isSuccess = empty($errors);
+    public function saveImportLog($importDate, $importedRows, $errors, $warnings, $ipAddress){
+        // Import je uspesny, pokud nenastanou chyby
+        $isSuccess = (empty($errors) ? 1 : 0);
+
+        $query = sprintf("INSERT INTO ImportLog(ImportDate, WasSuccess, ImportedRows, ImportErrors, ImportWarnings, IP) VALUES('%s', %d, %d, '%s', '%s', '%s')",
+            $importDate, $isSuccess, $importedRows, $errors, $warnings, $ipAddress);
+
+        return (@DatabaseFactory::create()->exec($query) == 1);
+
     }
 
 }

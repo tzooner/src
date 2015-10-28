@@ -32,6 +32,10 @@ class ImportedValueCollection
 
     }
 
+    public function count(){
+        return count($this->importedValues);
+    }
+
     /**
      * @param string $separator
      * @return string

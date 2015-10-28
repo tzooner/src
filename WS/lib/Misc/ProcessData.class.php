@@ -13,6 +13,7 @@ use lib\Constants;
 use lib\Entity\ImportedValue;
 use lib\Entity\ImportedValueCollection;
 use lib\Database\DatabaseFactory;
+use lib\Source\PowerplantData;
 
 class ProcessData
 {
@@ -21,6 +22,7 @@ class ProcessData
 
     private $columnsSetup;
     private $importErrorsLog;
+    private $importWarningLog;
 
     public function __construct($path){
         $this->Path = $path;
@@ -31,17 +33,17 @@ class ProcessData
             ->add(new ImportedValue(1, "Temp_BoilerInput", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
             ->add(new ImportedValue(2, "Temp_DistributionInput", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
             ->add(new ImportedValue(3, "Temp_Boiler", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
-            ->add(new ImportedValue(4, "Relay_BoilerPump", 0, 100, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(5, "Relay_RadiatorPump", 0, 100, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(6, "Relay_SwitchAKU", 0, 100, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(7, "Relay_SwitchBoiler", 0, 100, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(8, "Relay_BoilerFlow1", 0, 100, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(9, "Relay_BoilerFlow2", 0, 100, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(10, "Relay_PumpFromBoiler", 0, 100, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(11, "Relay_BoilerHeating", 0, 100, Constants::IMPORT_DATA_TYPE_BOOL))
+            ->add(new ImportedValue(4, "Relay_BoilerPump", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+            ->add(new ImportedValue(5, "Relay_RadiatorPump", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+            ->add(new ImportedValue(6, "Relay_SwitchAKU", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+            ->add(new ImportedValue(7, "Relay_SwitchBoiler", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+            ->add(new ImportedValue(8, "Relay_BoilerFlow1", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+            ->add(new ImportedValue(9, "Relay_BoilerFlow2", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+            ->add(new ImportedValue(10, "Relay_PumpFromBoiler", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+            ->add(new ImportedValue(11, "Relay_BoilerHeating", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
             ->add(new ImportedValue(12, "Performance_Drive", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
             ->add(new ImportedValue(13, "Performance_Network", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
-            ->add(new ImportedValue(14, "Other_Optocoupler", 0, 100, Constants::IMPORT_DATA_TYPE_BOOL))
+            ->add(new ImportedValue(14, "Other_Optocoupler", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
             ->add(new ImportedValue(15, "MeasurementTime", 0, 100, Constants::IMPORT_DATA_TYPE_STRING));
 
     }
@@ -68,7 +70,7 @@ class ProcessData
                 }
                 else{
 
-                    $insertQueryValues .= $this->generateMysqlInsertValues($line, $powerPlantID, $importDate);
+                    $insertQueryValues .= $this->generateMysqlInsertValues($line, $lineNr, $powerPlantID, $importDate);
 
                 }
 
@@ -82,7 +84,7 @@ class ProcessData
 
         $insertQueryValues = rtrim($insertQueryValues, ",");
 
-        $columns = sprintf("PowerPlantID_FK, %s, CreateDate", $this->columnsSetup->columnNamesInString());
+        $columns = sprintf("PowerPlantID_FK, %s, ImportDate", $this->columnsSetup->columnNamesInString());
 
         $query = sprintf("INSERT INTO PowerPlantData(%s) VALUES %s", $columns, $insertQueryValues);
 
@@ -94,8 +96,9 @@ class ProcessData
             $this->addImportError("SQL chyba pri importu: " . $e->getMessage());
         }
 
-        // TODO import log
-
+        $ipAddress = $_SERVER['REMOTE_ADDR'];
+        $PowerPlantData = new PowerplantData();
+        $PowerPlantData->saveImportLog($importDate, $importedRows, $this->getImportErrors(), $this->getImportWarnings(), $ipAddress);
 
     }
 
@@ -104,11 +107,12 @@ class ProcessData
      * Generuje se jen cast SQL dotazu - insert into xxx() values(TOTO SE GENERUJE)
      *
      * @param string $line  - jeden radek dat, data jsou oddelena oddelovacem definovanym v Config::FILE_SEPARATOR
+     * @param int $lineNr   - cislo radku
      * @param $powerPlantID - ID elektrarny, pro kterou jsou volana data
      * @param $importDate   - Datum importovanych dat, datum se bere z importovanych dat
      * @return string
      */
-    private function generateMysqlInsertValues($line, $powerPlantID, $importDate){
+    private function generateMysqlInsertValues($line, $lineNr, $powerPlantID, $importDate){
 
         // Odstraneni znaku pro novy radek
         $line = preg_replace('/\s+/', '', $line);
@@ -116,44 +120,55 @@ class ProcessData
         $items = explode(\Config::FILE_SEPARATOR, $line);
 
         $insertPart = "";
-        foreach ($items as $itemIndex => $itemValue) {
 
-            $columnSetup = $this->columnsSetup->get($itemIndex);
+        if(count($items) == $this->columnsSetup->count()) {
+            foreach ($items as $itemIndex => $itemValue) {
 
-            // Nastaveni pro sloupec musi byt definovano
-            if(!is_null($columnSetup)){
+                $columnSetup = $this->columnsSetup->get($itemIndex);
 
-                // Importovana hodnota je v povolenem rozmezi hodnot
-                if ($columnSetup->DataType != Constants::IMPORT_DATA_TYPE_STRING && $itemValue < $columnSetup->RangeMin || $itemValue > $columnSetup->RangeMax) {
+                // Nastaveni pro sloupec musi byt definovano
+                if (!is_null($columnSetup)) {
 
-                    $err = sprintf("Hodnota -%s- je pro sloupec -%s- mimo rozsah", $itemValue, $columnSetup->ColumnName);
-                    $this->addImportError($err);
+                    // Importovana hodnota je v povolenem rozmezi hodnot
+                    if ($columnSetup->DataType != Constants::IMPORT_DATA_TYPE_STRING && ($itemValue < $columnSetup->RangeMin || $itemValue > $columnSetup->RangeMax)) {
 
-                }
+                        $err = sprintf("\"%s\" je pro \"%s\" mimo rozsah", $itemValue, $columnSetup->ColumnName);
+                        $this->addImportWarnings($err);
 
-                switch($columnSetup->DataType){
-                    case Constants::IMPORT_DATA_TYPE_BOOL:
-                        $insertPart .= ($itemValue == 1 || $itemValue == "true" || $itemValue == true ? 1 : 0) . ',';
-                        break;
-                    case Constants::IMPORT_DATA_TYPE_FLOAT:
-                        $insertPart .= sprintf("%f,", $itemValue);
-                        break;
-                    case Constants::IMPORT_DATA_TYPE_INT:
-                        $insertPart .= sprintf("%d,", $itemValue);
-                        break;
-                    case Constants::IMPORT_DATA_TYPE_STRING:
-                        $insertPart .= sprintf("'%s',", $itemValue);
-                        break;
+                    }
+
+                    switch ($columnSetup->DataType) {
+                        case Constants::IMPORT_DATA_TYPE_BOOL:
+                            $insertPart .= ($itemValue == 1 || $itemValue == "true" || $itemValue == true ? 1 : 0) . ',';
+                            break;
+                        case Constants::IMPORT_DATA_TYPE_FLOAT:
+                            $insertPart .= sprintf("%f,", $itemValue);
+                            break;
+                        case Constants::IMPORT_DATA_TYPE_INT:
+                            $insertPart .= sprintf("%d,", $itemValue);
+                            break;
+                        case Constants::IMPORT_DATA_TYPE_STRING:
+                            $insertPart .= sprintf("'%s',", $itemValue);
+                            break;
+                    }
+
+                } else {
+                    $this->addImportError("Chybejici nastaveni pro sloupec s indexem " . $itemIndex);
                 }
 
             }
-            else{
-                $this->addImportError("Chybejici nastaveni pro sloupec s indexem " . $itemIndex);
-            }
+
+            $insertPart = rtrim($insertPart, ",");
+            $insertPart = sprintf("(%d, %s, '%s'),", $powerPlantID, $insertPart, $importDate);
 
         }
-        $insertPart = rtrim($insertPart, ",");
-        $insertPart = sprintf("(%d, %s, '%s'),", $powerPlantID, $insertPart, $importDate);
+        else{
+
+            $this->addImportError(sprintf("Pocet udaju na radku %d neodpovida nastaveni", $lineNr));
+            $insertPart = "";
+
+        }
+
 
         return $insertPart;
 
@@ -161,12 +176,22 @@ class ProcessData
 
     private function addImportError($errorText){
 
-        $this->importErrorsLog .= "||".$errorText;
+        $this->importErrorsLog .= $errorText . "||";
+
+    }
+
+    private function addImportWarnings($warningText){
+
+        $this->importWarningLog .= $warningText . "||";
 
     }
 
     public function getImportErrors(){
         return $this->importErrorsLog;
+    }
+
+    public function getImportWarnings(){
+        return $this->importWarningLog;
     }
 
 }

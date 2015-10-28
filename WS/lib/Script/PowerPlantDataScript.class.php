@@ -41,12 +41,27 @@ class PowerPlantDataScript extends Script
 
     }
 
+    /**
+     * Zpracuje prichozi data a vzdy vrati aktualni datum
+     *
+     * @param $parameters
+     * @param $fileData
+     * @return bool|string
+     */
     public function processMethodPUT($parameters, $fileData){
 
-        $powerplantID = (isset($parameters[0]) ? $parameters[0] : 0);
-        $Process = new ProcessData(\Config::FILE_PATH);
-        $Process->saveToFile($fileData);
-        $Process->importToDatabase($powerplantID);
+        try {
+            $powerplantID = (isset($parameters[0]) ? $parameters[0] : 0);
+            $filename = sprintf("%s_IMPORT.txt", date("YmdHi"));
+            $Process = new ProcessData(\Config::FILE_PATH . $filename);
+            $Process->saveToFile($fileData);
+            $Process->importToDatabase($powerplantID);
+        }
+        catch(\Exception $e){
+
+        }
+
+        return date("Y-m-d H:i:s");
 
     }
 
