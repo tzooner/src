@@ -11,33 +11,69 @@ namespace lib\Script;
 use lib\Constants;
 use lib\Misc\ProcessData;
 
-class PowerPlantDataScript extends Script
+class UserDataScript extends Script
 {
 
     public function __construct(){
         parent::__construct();
     }
 
-    public function processMethodGET($parameters){
+    public function processMethodGET($parameters, $verb){
 
-        if(empty($parameters)){
+        if(!empty($verb)){
 
-            $result = $this->PowerPlantData->getAllData();
+            switch($verb){
+                case "login":
+                    $username = (isset($parameters[0]) ? $parameters[0] : "");
+                    $password = (isset($parameters[1]) ? $parameters[1] : "");
+                    $result = $this->User->loginUser($username, $password);
+                    $count = (count($result) > 0 ? 1 : 0);
+                    break;
+                default:
+                    $result = $this->User->getAllUsers();
+                    $count = count($result);
+
+            }
+
             $this->Response->setData($result);
-            $this->Response->setReturnedRows(count($result));
+            $this->Response->setReturnedRows($count);
 
         }
         else{
 
-            $powerplantID = $parameters[0];
+            $result = $this->User->getAllUsers();
+            $count = count($result);
 
-            $result = $this->PowerPlantData->getPowerplantData($powerplantID);
             $this->Response->setData($result);
-            $this->Response->setReturnedRows(count($result));
+            $this->Response->setReturnedRows($count);
 
         }
 
         return $this->Response->getResponseJson();
+
+    }
+
+    public function processMethodPOST($parameters, $verb, $request){
+
+//        if(!empty($verb)){
+//
+//            switch($verb){
+//                case "login":
+//                    $username = (isset($parameters[0]) ? $parameters[0] : "");
+//                    $password = (isset($parameters[1]) ? $parameters[1] : "");
+//                    $result = $this->User->loginUser($username, $password);
+//                    $count = (count($result) > 0 ? 1 : 0);
+//                    break;
+//                default:
+//                    $result = $this->User->getAllUsers();
+//                    $count = count($result);
+//
+//            }
+//
+//            $this->Response->setData($result);
+//            $this->Response->setReturnedRows($count);
+//
+//        }
 
     }
 

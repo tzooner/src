@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="e94bac45-7e1a-476a-9602-2d505e2494be" name="SolarMonitorWS" url="http://localhost/solar_monitor/WS">
+        <fileTransfer mountedRoot="C:\xampp\htdocs\solar_monitor\WS" accessType="MOUNT" />
+      </webServer>
+    </option>
+  </component>
+</project>

@@ -15,7 +15,9 @@ namespace lib\RESTAPI;
 use lib\Constants;
 use lib\Entity\Response;
 use lib\Script\PowerPlantDataScript;
+use lib\Script\UserDataScript;
 use lib\Source\Powerplant;
+use lib\Source\User;
 
 class Router extends REST{
 
@@ -29,11 +31,13 @@ class Router extends REST{
         $Script = new PowerPlantDataScript();
         switch(strtolower($this->HttpMethod)){
             case "get":
-                return $Script->processMethodGET($this->Parameters);
+                return $Script->processMethodGET($this->Parameters, $this->Verb);
                 break;
             case "put":
                 return $Script->processMethodPUT($this->Parameters, $this->File);
                 break;
+            default:
+                return "Unsupported method";
         }
 
     }
@@ -53,15 +57,39 @@ class Router extends REST{
         }
         else{
 
-            $powerplantID = $this->Parameters[0];
+            $powerplantID = intval($this->Parameters[0]);
 
-            $result = $PowerPlant->getPowerPlant($powerplantID);
-            $Response->setData($result);
-            $Response->setReturnedRows(count($result));
+            if(isset($powerplantID) && $powerplantID > 0) {
+                $result = $PowerPlant->getPowerPlant($powerplantID);
+                $Response->setData($result);
+                $Response->setReturnedRows(count($result));
+            }
+            else{
+                $Response->setMessage("No powerplant ID");
+            }
 
         }
 
         return $Response->getResponseJson();
+
+    }
+
+    public function user(){
+
+        $Script = new UserDataScript();
+
+        switch(strtolower($this->HttpMethod)){
+            case "get":
+                return $Script->processMethodGET($this->Parameters, $this->Verb);
+                break;
+            case "post":
+                return $Script->processMethodPOST($this->Parameters, $this->Verb, $this->Request);
+            case "put":
+                return $Script->processMethodPUT($this->Parameters, $this->File);
+                break;
+            default:
+                return "Unsupported method";
+        }
 
     }
 

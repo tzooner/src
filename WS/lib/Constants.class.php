@@ -16,11 +16,7 @@ class Constants
 
     // Kazda odpoved obsahuje chybovy kod
     const RESPONSE_CODE_NO_ERROR = 0;
-
-    // Prefixy, ktere jsou pouzity v databazi v tabulce PowerplantData pro uchovavani udaju z elektrarny
-    // Napr.: Power_Actual, Temperature_Average atd
-    // Po pridani nazvu prefixu budou dostupna vsechna data s timto prefixem
-    const DATA_PREFIXES = array("power", "temperature");
+    const RESPONSE_CODE_MISSING_PARAMETERS = 1;
 
     // Datove typy importovanych hodnot
     const IMPORT_DATA_TYPE_INT = "int";

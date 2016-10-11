@@ -9,7 +9,7 @@
 namespace lib\Exceptions;
 
 
-class cDatabaseException
+class cDatabaseException extends cException
 {
 
 }

@@ -48,6 +48,7 @@ abstract class REST{
 
     public function __construct($request, $method){
 
+
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Methods: *");
         header("Content-Type: " . Constants::DEFAULT_RESPONSE_FORMAT . "; charset=utf-8");

@@ -24,8 +24,10 @@ class ProcessData
     private $importErrorsLog;
     private $importWarningLog;
 
-    public function __construct($path){
-        $this->Path = $path;
+    public function __construct($path, $fileName){
+
+        $this->checkPath($path);
+        $this->Path = $path . $fileName;
 
         $this->columnsSetup = new ImportedValueCollection();
         $this->columnsSetup
@@ -50,7 +52,10 @@ class ProcessData
 
     public function saveToFile($data){
 
-        file_put_contents($this->Path, $data);
+        //file_put_contents($this->Path, $data); // nefunguje na savane...
+        $fh = fopen($this->Path, 'a') or die("can't open file");
+        fwrite($fh, $data);
+        fclose($fh);
 
     }
 
@@ -86,7 +91,7 @@ class ProcessData
 
         $columns = sprintf("PowerPlantID_FK, %s, ImportDate", $this->columnsSetup->columnNamesInString());
 
-        $query = sprintf("INSERT INTO PowerPlantData(%s) VALUES %s", $columns, $insertQueryValues);
+        $query = sprintf("INSERT INTO PowerplantData(%s) VALUES %s", $columns, $insertQueryValues);
 
         $importedRows = 0;
         try {
@@ -115,7 +120,7 @@ class ProcessData
     private function generateMysqlInsertValues($line, $lineNr, $powerPlantID, $importDate){
 
         // Odstraneni znaku pro novy radek
-        $line = preg_replace('/\s+/', '', $line);
+        //$line = preg_replace('/\s+/', '', $line);
 
         $items = explode(\Config::FILE_SEPARATOR, $line);
 
@@ -192,6 +197,12 @@ class ProcessData
 
     public function getImportWarnings(){
         return $this->importWarningLog;
+    }
+
+    private function checkPath($path){
+        if(!file_exists($path)){
+            mkdir($path);
+        }
     }
 
 }

@@ -1,0 +1,39 @@
+.clear{
+    clear: both;
+}
+
+.mt30{
+    margin-top: 30px;
+}
+.mt120{
+    margin-top: 120px;
+}
+
+.ac{
+    text-align: center;
+}
+
+.cell{
+    width: 100px;
+    text-align: center;
+    border: 1px solid #33CCFF;
+    float: left;
+    margin: 0 8px 8px 8px;
+}
+
+.cell-title{
+    font-size: 18px;
+    text-align: center;
+    background-color: #33CCFF;
+    color: #FFFFFF;
+}
+
+.cell-body{
+    padding: 2px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+img.graph-image{
+    width: 100%;
+}

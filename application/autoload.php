@@ -9,7 +9,8 @@
 
 spl_autoload_register(function ($className) {
 
-    $file = $className . '.class.php';
+    $file = ConfigGeneral::APP_PATH.$className . '.class.php';
+//    echo $file.'<br>';
 //    $file = str_replace("\\", "/", $file);    // Pro linuxove stroje...
     if (file_exists($file)) {
         require_once $file;

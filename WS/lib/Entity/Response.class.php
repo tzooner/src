@@ -43,6 +43,7 @@ class Response
             }
         }
         $this->Data = $result;
+        $this->ReturnedRows = count($this->Data);
     }
 
     public function setMessage($message){

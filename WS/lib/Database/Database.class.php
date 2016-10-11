@@ -75,7 +75,12 @@ abstract class Database{
                     echo $error[2];
                 } else {
 
-                    return $prepare->fetchAll(\PDO::FETCH_ASSOC);
+                    $result = $prepare->fetchAll(\PDO::FETCH_ASSOC);
+                    if(empty($result)){
+                        return array();
+                    }
+
+                    return $result;
                 }
 
             } catch (\PDOException $ex) {
@@ -114,7 +119,12 @@ abstract class Database{
                 }
                 else {
 
-                    return $prepare->fetch(\PDO::FETCH_ASSOC);
+                    $result = $prepare->fetch(\PDO::FETCH_ASSOC);
+                    if(empty($result)){
+                        return array();
+                    }
+
+                    return $result;
                 }
 
             }
@@ -167,8 +177,19 @@ abstract class Database{
     }
 
     public static function changeEncoding($input){
-        $input = mb_convert_encoding($input, "utf-8");
+
         return $input;
+
+        if(is_array($input)){
+            foreach ($input as $row) {
+                return self::changeEncoding($row);
+
+            }
+        }
+        else {
+            $input = mb_convert_encoding($input, "utf-8");
+            return $input;
+        }
     }
 
     /**

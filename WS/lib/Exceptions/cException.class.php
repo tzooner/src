@@ -9,15 +9,19 @@
 namespace lib\Exceptions;
 
 
-class MException extends \Exception
+class cException extends \Exception
 {
 
-    public function __construct($message, $code, \Exception $previous)
+    public function __construct($message = null, $code = 0, \Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
 
         if(!\Config::IS_DEBUG){
             $this->exceptionToFile();
+        }
+        else{
+            echo $this->getMessage() . "<br>";
+            echo $this->getTraceAsString();
         }
 
     }
@@ -25,6 +29,7 @@ class MException extends \Exception
     public function errorMessage(){
 
         $err = sprintf("Error on line %d. Error message: '%s' in file: %s", $this->getLine(), $this->getMessage(), $this->getFile());
+        return $err;
 
     }
 

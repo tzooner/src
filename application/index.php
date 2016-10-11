@@ -1,5 +1,5 @@
 <?php
-session_start();    // Potrebne - na zaklade session ID se generuji treba nazvy souboru
+session_start();
 //error_reporting(1);
 //ini_set('display_errors', 0);
 /**
@@ -10,63 +10,45 @@ session_start();    // Potrebne - na zaklade session ID se generuji treba nazvy 
  * Date: 29.7.2015
  */
 
-require 'includes/core.php';
+require "Config.class.php";
+require "autoload.php";
 
-$presentationKey = \lib\helper\Security::secureGetPost("key", "get");
+require "includes/core.php";
 
-$Slide = new \lib\source\Slide($presentationKey);
+$page = (isset($_GET["page"]) ? strtolower($_GET["page"]) : "");
+$pageScript = "";
 
-?>
-<!DOCTYPE html>
-<html>
+if(!$Authorization->isLoggedIn()){
+    $pageScript = "page_login";
+}
+else {
 
-    <head>
-        <?php require 'includes/html_header.php'; ?>
-    </head>
-    <body>
+    if (isset($_GET['action']) && $_GET['action'] != ''){
+        $action = $_GET['action'];
 
-        <?php
-        if(empty($presentationKey)){
-            $presentations = $Slide->getActivePresentationKeysString();
-            $message = sprintf("Je potřeba zadat do URL klíč prezentace. Dostupné prezentace: <strong>%s</strong>", $presentations);
-            \lib\entity\MessagesStorage::getInstance()->addMessage(new \lib\entity\Message($message , \lib\entity\MessageType::ERROR));
-            echo \lib\entity\MessagesStorage::getInstance()->getMessagesHTML();
-            exit;
+        switch($action){
+            case "logout":
+                $Authorization->logout();
+                break;
         }
-        ?>
 
-        <div id="header">
-<!--            Hlavička-->
-            <div id="offline-info">
-                <img src="view/images/disconnected.png"/>
-            </div>
-        </div>
+    }
 
-        <input type="hidden" id="presentationKey" value="<?php echo $presentationKey;?>">
-        <!-- Vsechny nactene slidy -->
-        <div id="slides" data-reload-period="">
+    switch ($page) {
+        case "home":
+            $pageScript = "page_home";
+            break;
+        case "powerplant":
+            $pageScript = "page_powerplant";
+            break;
+        default:
+            $pageScript = "page_home";
+            break;
+    }
+}
 
-            <?php
+require_once "includes/html_header.php";
+require_once sprintf("view/page/%s.php", $pageScript);
+require_once "includes/html_footer.php";
 
-                \lib\helper\Slide::loadAllSlidesHTML($presentationKey);
-
-            ?>
-
-        </div>
-
-
-        <!--            Patička-->
-        <div id="footer">
-
-            <div class="slide-pagination"></div>
-
-        </div>
-
-    </body>
-
-</html>
-
-<?php
-// Zalogovani pripadnych chyb do souboru
-\lib\entity\MessagesStorage::getInstance()->logErrorMessages();
 ?>

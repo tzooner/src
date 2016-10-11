@@ -14,14 +14,16 @@ use lib\Database\DatabaseFactory;
 class Powerplant
 {
 
-    public function getAllPowerPlants(){
+
+    public function getAllFacilities(){
 
         $query = "SELECT
                   *
-                  FROM PowerPlant P INNER JOIN Facility F on P.FacilityID_FK = F.FacilityID
-                  ORDER BY P.PowerPlantName";
+                  FROM Facility
+                  ORDER BY FacilityName";
 
         try {
+
             $result = @DatabaseFactory::create()->getAllRows($query);
             return $result;
         }
@@ -31,22 +33,77 @@ class Powerplant
 
     }
 
+    public function getAllPowerPlants(){
+
+        $facilities = $this->getAllFacilities();
+
+        $query = "SELECT
+                  *
+                  FROM Powerplant
+                  ORDER BY PowerPlantName";
+
+        try {
+
+            $powerplants = @DatabaseFactory::create()->getAllRows($query);
+            $result = array();
+            foreach ($powerplants as $powerplant) {
+
+                $powerplant["Facilities"] = array();
+                $powerPlantID = $powerplant["PowerPlantID"];
+                foreach ($facilities as $facility) {
+                    if($powerPlantID == $facility["PowerPlantID_FK"]){
+                        $powerplant["Facilities"][] = $facility;
+                    }
+                }
+
+                $result[] = $powerplant;
+
+            }
+
+            return $result;
+
+        }
+        catch(\PDOException $e){
+            return array();
+        }
+
+    }
+
     public function getPowerPlant($powerPlantID){
+
+        $facilities = $this->getAllFacilities();
 
         $query = sprintf("SELECT
                           *
                           FROM
-                            PowerPlant P
-                          INNER JOIN Facility F on P.FacilityID_FK = F.FacilityID
+                            Powerplant
                           WHERE
-                            P.PowerPlantID = %d
+                            PowerPlantID = %d
                           ORDER BY
-                            P.PowerPlantName
+                            PowerPlantName
                           ", $powerPlantID);
 
         try {
-            $result = @DatabaseFactory::create()->getAllRows($query);
+            $powerplants = @DatabaseFactory::create()->getAllRows($query);
+
+            $result = array();
+            foreach ($powerplants as $powerplant) {
+
+
+                $powerplant["Facilities"] = array();
+                $powerPlantID = $powerplant["PowerPlantID"];
+                foreach ($facilities as $facility) {
+                    if($powerPlantID == $facility["PowerPlantID_FK"]){
+                        $powerplant["Facilities"][] = $facility;
+                    }
+                }
+
+                $result[] = $powerplant;
+
+            }
+
             return $result;
+
         }
         catch(\PDOException $e){
             return array();

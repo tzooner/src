@@ -10,6 +10,7 @@ class Config
 {
 
     const IS_DEBUG = true;
+    const LOG_PATH = "log.txt";
 
     const DB_Host = "localhost";
     const DB_Name = "solar_monitor";
@@ -17,7 +18,7 @@ class Config
     const DB_Password = "";
     const DB_Type = "mysql";
 
-    const FILE_PATH = "./";
+    const FILE_PATH = "./Imports/";
     const FILE_SEPARATOR = ";";
 
 }

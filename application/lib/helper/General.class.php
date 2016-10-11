@@ -13,43 +13,44 @@ namespace lib\helper;
 
 class General {
 
-    /**
-     * Vypocita percentualni podil mezi dvema hodnotama
-     *
-     * @param $value1
-     * @param $value2
-     * @param int $decimalPlacesRound   Pocet desetinnych mist, na ktery se ma vysledek zaokrouhlit
-     * @return float|int
-     */
-    public static function calcShare($value1, $value2, $decimalPlacesRound = 2){
+    public static function getParameter($name, $type = "get"){
 
-        $percentage = 0;
-        if($value2 != 0){   // Ochrana, aby se nedelilo nulou...
+        $type = strtolower($type);
+        $value = "";
 
-            if($value1 == 0){   // $value2 neni nula, ale $value1 je nula => tj. stoprocentni pokles
-                $percentage = 100;
-            }
-            else {
-                $percentage = abs((1 - ($value1 / $value2))) * 100;
-            }
-
+        switch($type){
+            case "get":
+                if(!isset($_GET[$name])){
+                    return "";
+                }
+                if(is_array($_GET[$name])){
+                    $value = $_GET[$name];
+                }
+                else {
+                    $value = @filter_input(INPUT_GET, $name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                }
+                break;
+            case "post":
+                if(!isset($_POST[$name])){
+                    return "";
+                }
+                if(is_array($_POST[$name])){
+                    $value = $_POST[$name];
+                }
+                else {
+                    $value = @filter_input(INPUT_POST, $name, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                }
         }
-        else{
-
-            if($value1 > 0) {
-
-                $percentage = 100;
-
-            }
-
-        }
-
-        if($value2 > $value1){
-            $percentage *= (-1);
+        if(isset($value)){
+            return $value;
         }
 
-        return round($percentage, $decimalPlacesRound);
+        return "";
 
+    }
+
+    public static function isSetOrEmpty($var){
+        return (isset($var) ? $var : "");
     }
 
     /**
@@ -67,11 +68,6 @@ class General {
 
     }
 
-    public static function formatPercentage($number, $decimalPlacesRound = 2){
-        $number = floatval($number);
-        return round($number, $decimalPlacesRound) . "%";
-    }
-
     /**
      * Nahradi vsechy whitespaces (v CZ?) mezerou nebo zvolenym retezcem
      *
@@ -85,23 +81,10 @@ class General {
 
     }
 
-    /**
-     * Zobrazi logo firmy v paticce stranky vpravo
-     *
-     * @param string $height
-     */
-    public static function generateFooterLogo($height = ""){
-
-        $heightConstraint = "";
-        if($height != ""){
-            $heightConstraint = sprintf("height: %dpx", $height);
+    public static function clearSession($name){
+        if(isset($_SESSION[$name])) {
+            unset($_SESSION[$name]);
         }
-
-        echo sprintf('
-            <div id="brand-logo">
-                <img class="hidden-xs" src="%s" alt="" style="%s">
-            </div>', \ConfigPaths::BRAND_LOGO_PATH, $heightConstraint);
-
     }
 
 } 
