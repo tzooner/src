@@ -8,8 +8,8 @@
 
 if(isset($_POST["btnLogin"])){
 
-    $username = \lib\helper\General::getParameter("txtUsername", "post");
-    $password = \lib\helper\General::getParameter("txtPassword", "post");
+    $username = \lib\helper\URL::getParameter("txtUsername", "post");
+    $password = \lib\helper\URL::getParameter("txtPassword", "post");
 
     if($Authorization->loginUser($username, $password)){
 

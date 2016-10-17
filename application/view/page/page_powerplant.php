@@ -6,13 +6,15 @@
  * Time: 22:43
  */
 
-use \lib\helper\General;
+use \lib\helper\URL;
+use \lib\helper\DateTime;
+use \lib\source\Powerplant;
 
 // ### Parametry
-$id = General::getParameter("id", "get");
-$columnName = General::getParameter("column", "get");
-$dateFrom = General::getParameter("dateFrom", "get");
-$dateTo = General::getParameter("dateTo", "get");
+$id = URL::getParameter("id", "get");
+$columnName = URL::getParameter("column", "get");
+$dateFrom = URL::getParameter("dateFrom", "get");
+$dateTo = URL::getParameter("dateTo", "get");
 
 // ### Nastaveni grafu
 $selectedValues = \lib\helper\Graph::getSelectedColumns($columnName);
@@ -34,8 +36,8 @@ if(empty($dateFrom) || empty($dateTo)){
 }
 
 // Naformatovane datum pro uzivatelske rozhrani
-$dateFrom_formatted = \lib\helper\DateTime::formatDate($dateFrom, "d.m.Y H:i");
-$dateTo_formatted = \lib\helper\DateTime::formatDate($dateTo, "d.m.Y H:i");
+$actualDateFrom_formatted = DateTime::formatDate($dateFrom, "d.m.Y H:i");
+$dateTo_formatted = DateTime::formatDate($dateTo, "d.m.Y H:i");
 
 // ### Odkazy pro tlacitka prepinajici rozsah dat
 $actualURL = "index.php?page=powerplant&id=" . $id;
@@ -45,12 +47,12 @@ $monthRangeLink = $actualURL . sprintf("&dateFrom=%s&dateTo=%s", $monthRange_fro
 
 // ### Obrazek grafu
 $graph_image = sprintf("<img src='view/page/graphs_images/image_basicGraph.php?id=%d&dateFrom=%s&dateTo=%s%s' alt='Graf naměřených hodnot z období %s až %s'>"
-    , $id, $dateFrom, $dateTo, $graphSettings, $dateFrom_formatted, $dateTo_formatted);
+    , $id, $dateFrom, $dateTo, $graphSettings, $actualDateFrom_formatted, $dateTo_formatted);
 
 
 
 // ### Nacteni dat
-$Powerplant = new \lib\source\Powerplant($WebService);
+$Powerplant = new Powerplant($WebService);
 $dataOverview = $Powerplant->GetDataOverview($id, $dateFrom, $dateTo);
 $columnsDefinition = $Powerplant->GetColumns();
 
@@ -58,6 +60,12 @@ $columnsDefinition = $Powerplant->GetColumns();
 $detail = $Powerplant->GetPowerPlantData($id);
 
 ?>
+
+<div class="row mb15">
+    <div class="col-lg-12 text-right">
+        <a href="<?php echo URL::getActualURL() . "&export=pdf"; ?>" class="btn btn-warning btn-xs">Exportovat do PDF</a>
+    </div>
+</div>
 
 <div class="row">
 
@@ -67,53 +75,72 @@ $detail = $Powerplant->GetPowerPlantData($id);
             <div class="panel panel-default">
                 <div class="panel-body">
 
-                    <form action="" method="get">
+                    <form action="" method="get" id="frmSetGraph" style="margin: 0">
 
                         <input type="hidden" name="page" value="powerplant"/>
                         <input type="hidden" name="id" value="<?php echo $id; ?>"/>
 
                         <div class="row">
-                            <div class='col-md-3'>
-                                <div class="form-group">
-                                    <div class='input-group date datepicker-from'>
-                                        <input type='text' class="form-control" name='dateFrom' value="<?php echo $dateFrom_formatted; ?>"/>
-                                        <span class="input-group-addon">
+
+                            <div class="col-lg-7 col-md-6 col-sm-6">
+
+                                <div class="row" style="margin-bottom: 8px">
+
+                                    <div class="col-lg-6 col-md-4 text-right">
+                                        Nastavit rozsah:
+                                    </div>
+                                    <div class="col-lg-6 col-md-8">
+                                        <button type="button" class="btn btn-info btn-xs btn-set-date" data-date-from="<?php echo DateTime::formatDateTime($dayRange_from);?>" data-date-to="<?php echo DateTime::formatDateTime($dayRange_to);?>">Aktuální den</button>
+                                        <button type="button" class="btn btn-info btn-xs btn-set-date" data-date-from="<?php echo DateTime::formatDateTime($weekRange_from);?>" data-date-to="<?php echo DateTime::formatDateTime($weekRange_to);?>">Aktuální týden</button>
+                                        <button type="button" class="btn btn-info btn-xs btn-set-date" data-date-from="<?php echo DateTime::formatDateTime($monthRange_from);?>" data-date-to="<?php echo DateTime::formatDateTime($monthRange_to);?>">Aktuální měsíc</button>
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+
+                                    <div class='col-md-6'>
+                                        <div class="form-group">
+                                            <div class='input-group date datepicker-from'>
+                                                <input type='text' class="form-control" name='dateFrom' id="dateFrom" value="<?php echo $actualDateFrom_formatted; ?>"/>
+                                                <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class='col-md-3'>
-                                <div class="form-group">
-                                    <div class='input-group date datepicker-to'>
-                                        <input type='text' class="form-control" name='dateTo'  value="<?php echo $dateTo_formatted; ?>"/>
-                                        <span class="input-group-addon">
+                                    <div class='col-md-6'>
+                                        <div class="form-group">
+                                            <div class='input-group date datepicker-to'>
+                                                <input type='text' class="form-control" name='dateTo' id="dateTo"  value="<?php echo $dateTo_formatted; ?>"/>
+                                                <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
+                                            </div>
+                                        </div>
                                     </div>
+
                                 </div>
+
                             </div>
-                            <div class='col-md-3'>
-                                <?php echo \lib\source\PowerplantHTML::printValuesSelect($columnsDefinition, $selectedValues); ?>
-                            </div>
-                            <div class='col-md-3 text-right'>
-                                <div class="form-group">
-                                    <input type="submit" name="setDateRange" value="Nastavit zobrazení" class="btn btn-primary"/>
+                            <div class="col-lg-5 col-md-6 col-sm-6">
+
+                                <div class="row">
+
+                                    <div class="col-lg-7 col-md-7 text-right">
+                                        <?php echo \lib\source\PowerplantHTML::printValuesSelect($columnsDefinition, $selectedValues); ?>
+                                    </div>
+                                    <div class="col-lg-5 col-md-5 text-right">
+                                        <input type="submit" name="setDateRange" value="Nastavit zobrazení" class="btn btn-primary btn-sm"/>
+                                    </div>
+
                                 </div>
+
                             </div>
+
 
                         </div>
 
-                        <div class="row">
-                            <div class="col-lg-3 col-md-3">
-                                Zobrazit data pro aktuální:
-                            </div>
-                            <div class="col-md-2">
-                                <a href="<?php echo $dayRangeLink; ?>" class="btn btn-primary btn-xs">Den</a>
-                                <a href="<?php echo $weekRangeLink; ?>" class="btn btn-primary btn-xs">Týden</a>
-                                <a href="<?php echo $monthRangeLink; ?>" class="btn btn-primary btn-xs">Měsíc</a>
-                            </div>
-                        </div>
 
                     </form>
 
@@ -122,11 +149,38 @@ $detail = $Powerplant->GetPowerPlantData($id);
             </div>
 
             <div class="row mt30">
-                <div class="col-md-12">
+                <div class="col-lg-8 col-md-8 col-sm-12 text-center">
 
-                    <?php
-                        echo $graph_image;
-                    ?>
+                    <div class="panel panel-success minh">
+
+                        <div class="panel-heading">
+                            Graf naměřených hodnot
+                        </div>
+
+                        <div class="panel-body">
+                            <?php
+                            echo $graph_image;
+                            ?>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 text-center">
+
+                    <div class="panel panel-success minh">
+
+                        <div class="panel-heading">
+                            Přehled naměřených údajů
+                        </div>
+
+                        <div class="panel-body">
+                            <?php
+                            echo \lib\source\PowerplantHTML::printOverview($dataOverview, $columnsDefinition);
+                            ?>
+                        </div>
+
+                    </div>
 
                 </div>
             </div>
@@ -138,18 +192,20 @@ $detail = $Powerplant->GetPowerPlantData($id);
 
 <div class="row">
 
-    <div class="col-lg-6 col-md-6 col-sm-6">
+    <div class="col-lg-8 col-md-8 col-sm-12">
 
-        <?php
-            echo \lib\source\PowerplantHTML::printOverview($dataOverview, $columnsDefinition);
-        ?>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Informace o elektrárně
+            </div>
+            <div class="panel-body">
 
-    </div>
-    <div class="col-lg-6 col-md-6 col-sm-6">
+                <?php
+                echo \lib\source\PowerplantHTML::printDetail($detail);
+                ?>
 
-        <?php
-        echo \lib\source\PowerplantHTML::printDetail($detail);
-        ?>
+            </div>
+        </div>
 
     </div>
 

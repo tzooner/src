@@ -24,7 +24,6 @@ class DateTime {
         if(empty($input)) return "";
         return date($format, strtotime($input));
     }
-
     /**
      * Naformatuje vstupni datum a cas do formatu datumu a casu pouzivaneho v cele aplikaci
      * @param $input

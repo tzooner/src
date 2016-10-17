@@ -27,7 +27,7 @@ class PowerplantHTML
                         <th>Město</th>
                         <th>Ulice</th>
                         <th>Mapa</th>
-                        <th></th>
+                        <th class='text-right'><a href='index.php?page=page_powerplant_add'><span class='glyphicon glyphicon glyphicon-plus-sign text-success' title='Přidat elektrárnu'></span></a></th>
                     </tr>
                     </thead>
                     <tbody>";
@@ -59,13 +59,13 @@ class PowerplantHTML
 
         $html .= "<tbody>";
 
-        $html .= sprintf("<tr><td>Název</td><td>%s</td></tr>", $row["PowerPlantName"]);
-        $html .= sprintf("<tr><td>Popis</td><td>%s</td></tr>", $row["Desciption"]);
-        $html .= sprintf("<tr><td>Město</td><td>%s</td></tr>", $row["City"]);
-        $html .= sprintf("<tr><td>Ulice</td><td>%s</td></tr>", $row["Street"]);
-        $html .= sprintf('<tr><td>Lokace</td>
+        $html .= sprintf("<tr><th>Název</th><td>%s</td></tr>", $row["PowerPlantName"]);
+        $html .= sprintf("<tr><th>Popis</th><td>%s</td></tr>", $row["Desciption"]);
+        $html .= sprintf("<tr><th>Město</th><td>%s</td></tr>", $row["City"]);
+        $html .= sprintf("<tr><th>Ulice</th><td>%s</td></tr>", $row["Street"]);
+        $html .= sprintf('<tr><th>Lokace</th>
                             <td>
-                                <div id="map" style="width:250px;height:250px"></div>
+                                <div id="map" style="width:580px;height:300px"></div>
 
                                 <script>
                                 function myMap() {
@@ -90,7 +90,7 @@ class PowerplantHTML
 
     public static function printOverview($data, $columnsDefinition){
 
-        $html = "<table class='table table-bordered'>";
+        $html = "<table class='table'>";
         $html .= "<tbody>";
 
         foreach ($data as $sqlName => $value) {
@@ -116,7 +116,7 @@ class PowerplantHTML
 
     public static function printValuesSelect($columnsDefinition, $selectedValues){
 
-        $html = "<select name='column[]' multiple>";
+        $html = "<select name='column[]' id='cmbColumn' multiple>";
         foreach ($columnsDefinition as $columnName => $title){
 
             $selected = "";

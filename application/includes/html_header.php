@@ -33,6 +33,7 @@
         Helper\HTML::loadJS("moment-with-locales");
         Helper\HTML::loadJS("bootstrap-datetimepicker");
         Helper\HTML::loadJS("main");
+        Helper\HTML::loadJS("events");
 
         ?>
 

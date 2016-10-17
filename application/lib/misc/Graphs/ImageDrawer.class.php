@@ -11,6 +11,7 @@ namespace lib\misc\Graphs;
 
 use lib\source\Powerplant;
 use lib\source\PowerplantColumnName;
+use lib\helper\URL;
 
 class ImageDrawer
 {
@@ -26,12 +27,12 @@ class ImageDrawer
     public function __construct(IGraph $Graph, Powerplant $Powerplant)
     {
         $this->Graph = $Graph;
-        $this->Titles = \lib\helper\General::getParameter("title", "get");
+        $this->Titles = URL::getParameter("title", "get");
 
-        $id = \lib\helper\General::getParameter("id", "get");
-        $dateFrom = \lib\helper\General::getParameter("dateFrom", "get");
-        $dateTo = \lib\helper\General::getParameter("dateTo", "get");
-        $this->ColumnNames = \lib\helper\General::getParameter("column", "get");
+        $id = URL::getParameter("id", "get");
+        $dateFrom = URL::getParameter("dateFrom", "get");
+        $dateTo = URL::getParameter("dateTo", "get");
+        $this->ColumnNames = URL::getParameter("column", "get");
 
         $columnNames = (!empty($this->ColumnNames) ? implode(",", $this->ColumnNames) : PowerplantColumnName::TEMP_AKU);
         // Nastavi se tydenni rozsah, pokud neni nastaveno datum
