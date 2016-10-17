@@ -10,28 +10,41 @@
 namespace lib\Source;
 
 use lib\Database\DatabaseFactory;
+use lib\Helper\GeneralHelper;
 
 class User
 {
 
     public function getAllUsers(){
 
-        $query = "SELECT UserID, Username, Email FROM user ORDER BY UserID";
+        $query = "SELECT
+                         UserID
+                        ,Username
+                        ,Email
+                        ,r.RoleID
+                        ,r.Name AS RoleName
+                        ,r.Description AS RoleDescription
+                      FROM `user` u
+                      INNER JOIN Role r ON u.RoleID_FK = r.RoleID
+                      ORDER BY UserID";
         return @DatabaseFactory::create()->getAllRows($query);
 
     }
 
     public function loginUser($username, $password){
 
-//        $username = $this->Database->checkString($username);
-//        $password = self::hashPassword($this->Database->checkString($password));
+        $password = GeneralHelper::HashPassword($password);
 
         $query = sprintf("
                       SELECT
                          UserID
                         ,Username
                         ,Email
-                      FROM `user`
+                        ,r.RoleID
+                        ,r.Name AS RoleName
+                        ,r.Description AS RoleDescription
+                      FROM `user` u
+                      INNER JOIN Role r ON u.RoleID_FK = r.RoleID
                       WHERE username='%s' AND password='%s'",
             $username, $password);
 

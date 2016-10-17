@@ -41,6 +41,9 @@ else {
         case "powerplant":
             $pageScript = "page_powerplant";
             break;
+        case "powerplant_new":
+            $pageScript = "page_powerplant_new";
+            break;
         default:
             $pageScript = "page_home";
             break;

@@ -15,6 +15,7 @@ namespace lib\RESTAPI;
 use lib\Constants;
 use lib\Entity\Response;
 use lib\Script\PowerPlantDataScript;
+use lib\Script\SettingsScript;
 use lib\Script\UserDataScript;
 use lib\Source\Powerplant;
 use lib\Source\User;
@@ -81,7 +82,6 @@ class Router extends REST{
         switch(strtolower($this->HttpMethod)){
             case "get":
                 return $Script->processMethodGET($this->Parameters, $this->Verb);
-                break;
             case "post":
                 return $Script->processMethodPOST($this->Parameters, $this->Verb, $this->Request);
             case "put":
@@ -90,6 +90,13 @@ class Router extends REST{
             default:
                 return "Unsupported method";
         }
+
+    }
+
+    public function settings(){
+
+        $Script = new SettingsScript();
+        return $Script->processMethodGET($this->Parameters, $this->Verb);
 
     }
 

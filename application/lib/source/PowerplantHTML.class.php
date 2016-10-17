@@ -27,7 +27,7 @@ class PowerplantHTML
                         <th>Město</th>
                         <th>Ulice</th>
                         <th>Mapa</th>
-                        <th class='text-right'><a href='index.php?page=page_powerplant_add'><span class='glyphicon glyphicon glyphicon-plus-sign text-success' title='Přidat elektrárnu'></span></a></th>
+                        <th class='text-right'><a href='index.php?page=powerplant_new'><span class='glyphicon glyphicon glyphicon-plus-sign text-success' title='Přidat elektrárnu'></span></a></th>
                     </tr>
                     </thead>
                     <tbody>";

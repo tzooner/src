@@ -20,7 +20,7 @@ class Constants
 
     // Datove typy importovanych hodnot
     const IMPORT_DATA_TYPE_INT = "int";
-    const IMPORT_DATA_TYPE_FLOAT = "int";
+    const IMPORT_DATA_TYPE_FLOAT = "float";
     const IMPORT_DATA_TYPE_BOOL = "bool";
     const IMPORT_DATA_TYPE_STRING = "string";
 

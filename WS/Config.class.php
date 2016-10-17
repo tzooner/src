@@ -13,12 +13,14 @@ class Config
     const LOG_PATH = "log.txt";
 
     const DB_Host = "localhost";
-    const DB_Name = "solar_monitor";
+    const DB_Name = "solar_monitor_v2";
     const DB_Username = "root";
     const DB_Password = "";
     const DB_Type = "mysql";
 
     const FILE_PATH = "./Imports/";
     const FILE_SEPARATOR = ";";
+
+    const SECURITY_HASH_SALT = "ghvmaughawpeiuys987";
 
 }

@@ -20,33 +20,37 @@ class ProcessData
 
     private $Path;
 
+    protected $PowerPlantID;
+
     private $columnsSetup;
     private $importErrorsLog;
     private $importWarningLog;
 
-    public function __construct($path, $fileName){
+    public function __construct($powerPlantID, $path, $fileName){
 
+        $this->PowerPlantID = $powerPlantID;
         $this->checkPath($path);
         $this->Path = $path . $fileName;
 
         $this->columnsSetup = new ImportedValueCollection();
-        $this->columnsSetup
-            ->add(new ImportedValue(0, "Temp_AKU", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
-            ->add(new ImportedValue(1, "Temp_BoilerInput", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
-            ->add(new ImportedValue(2, "Temp_DistributionInput", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
-            ->add(new ImportedValue(3, "Temp_Boiler", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
-            ->add(new ImportedValue(4, "Relay_BoilerPump", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(5, "Relay_RadiatorPump", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(6, "Relay_SwitchAKU", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(7, "Relay_SwitchBoiler", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(8, "Relay_BoilerFlow1", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(9, "Relay_BoilerFlow2", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(10, "Relay_PumpFromBoiler", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(11, "Relay_BoilerHeating", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(12, "Performance_Drive", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
-            ->add(new ImportedValue(13, "Performance_Network", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
-            ->add(new ImportedValue(14, "Other_Optocoupler", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
-            ->add(new ImportedValue(15, "MeasurementTime", 0, 100, Constants::IMPORT_DATA_TYPE_STRING));
+        $this->columnsSetup->loadColumnsDefinition($this->PowerPlantID);
+//        $this->columnsSetup
+//            ->add(new ImportedValue(0, "Temp_AKU", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
+//            ->add(new ImportedValue(1, "Temp_BoilerInput", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
+//            ->add(new ImportedValue(2, "Temp_DistributionInput", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
+//            ->add(new ImportedValue(3, "Temp_Boiler", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
+//            ->add(new ImportedValue(4, "Relay_BoilerPump", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+//            ->add(new ImportedValue(5, "Relay_RadiatorPump", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+//            ->add(new ImportedValue(6, "Relay_SwitchAKU", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+//            ->add(new ImportedValue(7, "Relay_SwitchBoiler", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+//            ->add(new ImportedValue(8, "Relay_BoilerFlow1", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+//            ->add(new ImportedValue(9, "Relay_BoilerFlow2", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+//            ->add(new ImportedValue(10, "Relay_PumpFromBoiler", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+//            ->add(new ImportedValue(11, "Relay_BoilerHeating", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+//            ->add(new ImportedValue(12, "Performance_Drive", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
+//            ->add(new ImportedValue(13, "Performance_Network", 0, 100, Constants::IMPORT_DATA_TYPE_FLOAT))
+//            ->add(new ImportedValue(14, "Other_Optocoupler", 0, 1, Constants::IMPORT_DATA_TYPE_BOOL))
+//            ->add(new ImportedValue(15, "MeasurementTime", 0, 100, Constants::IMPORT_DATA_TYPE_STRING));
 
     }
 
@@ -59,7 +63,7 @@ class ProcessData
 
     }
 
-    public function importToDatabase($powerPlantID){
+    public function importToDatabase(){
 
         $importDate = "";
         $handle = fopen($this->Path, "r");
@@ -75,7 +79,7 @@ class ProcessData
                 }
                 else{
 
-                    $insertQueryValues .= $this->generateMysqlInsertValues($line, $lineNr, $powerPlantID, $importDate);
+                    $insertQueryValues .= $this->generateMysqlInsertValues($line, $lineNr, $this->PowerPlantID, $importDate);
 
                 }
 

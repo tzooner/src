@@ -9,11 +9,34 @@
 namespace lib\Entity;
 
 
+use lib\Source\Settings;
+
 class ImportedValueCollection
 {
 
     private $importedValues = array();
     public function __construct(){
+
+    }
+
+    /**
+     * Vygeneruje definici sloupcu z databaze z tabulky columnsDefinition
+     * @param $powerPlantID
+     */
+    public function loadColumnsDefinition($powerPlantID){
+
+        $Settings = new Settings();
+        $definitions = $Settings->getColumnsDefinitions($powerPlantID);
+
+        $index = 0;
+        foreach ($definitions as $def) {
+            $colName = $def["ColumnName"];
+            $dataType = $def["DataType"];
+            $min = $def["MinValue"];
+            $max = $def["MaxValue"];
+            $this->add(new ImportedValue($index, $colName, $min, $max, $dataType));
+            $index++;
+        }
 
     }
 

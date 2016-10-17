@@ -10,6 +10,7 @@
 namespace lib;
 
 use lib\helper\General;
+use lib\helper\Response;
 use \lib\webservice\WebService;
 use \lib\source\Users;
 use \lib\helper\URL;
@@ -34,15 +35,17 @@ class Authorization {
 
     public function loginUser($username, $password, $returnInArray = true){
 
-        $data = $this->Users->loginUser($username, $password);
+        $dataRaw = $this->Users->loginUser($username, $password);
+        $data = Response::getData($dataRaw);
 
-        if($data["ERROR_CODE"] == ErrorCodes::WS_NO_ERROR){
+        if($dataRaw["ERROR_CODE"] == ErrorCodes::WS_NO_ERROR){
 
-            if($data['RETURNED_ROWS'] > 0){   // Prihlaseni probehlo uspesne
+            if($dataRaw['RETURNED_ROWS'] > 0){   // Prihlaseni probehlo uspesne
 
                 $_SESSION['AUTH'] = array(
                     'logged' => true,
-                    'username' => $username
+                    'username' => $username,
+                    'role' => $data["RoleName"]
                 );
 
                 return true;
@@ -69,6 +72,10 @@ class Authorization {
 
     public function isLoggedIn(){
         return General::isSetOrEmpty(@$_SESSION["AUTH"]["logged"]);
+    }
+
+    public function isUserAdmin(){
+        return (strtolower(General::isSetOrEmpty(@$_SESSION["AUTH"]["role"])) == Constants::ROLE_ADMIN);
     }
 
 } 

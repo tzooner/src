@@ -120,9 +120,9 @@ class PowerPlantDataScript extends Script
 
                 $filePath = sprintf("%sImport_%s/", \Config::FILE_PATH, date("Y-m"));
                 $filename = sprintf("import_%s.txt", date("Y-m-d-H-i"));
-                $Process = new ProcessData($filePath, $filename);
+                $Process = new ProcessData($powerplantID, $filePath, $filename);
                 $Process->saveToFile($fileData);
-                $Process->importToDatabase($powerplantID);
+                $Process->importToDatabase();
 
             }
             else{

@@ -5,7 +5,6 @@ $Powerplant = new \lib\source\Powerplant($WebService);
 
 $table = \lib\source\PowerplantHTML::printTable($Powerplant->GetAllPowerPlantData());
 
-
 ?>
 
 <div class="row">

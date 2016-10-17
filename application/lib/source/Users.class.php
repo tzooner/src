@@ -11,6 +11,7 @@ namespace lib\source;
 
 use lib\Constants;
 use lib\ErrorCodes;
+use lib\helper\Response;
 use lib\webservice\WebService;
 
 class Users {

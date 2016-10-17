@@ -34,4 +34,14 @@ class GeneralHelper
         return (isset($value) ? $value : null);
     }
 
+    public static function HashPassword($password){
+
+        return $password;
+
+        // TODO povolit hashovani
+        $salt = \Config::SECURITY_HASH_SALT;
+        return sha1(sprintf("%s%s", $salt, md5($password)));
+
+    }
+
 }
