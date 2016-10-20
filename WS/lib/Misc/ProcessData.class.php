@@ -58,6 +58,7 @@ class ProcessData
 
         //file_put_contents($this->Path, $data); // nefunguje na savane...
         $fh = fopen($this->Path, 'a') or die("can't open file");
+        $data = str_replace("\n", PHP_EOL, $data);
         fwrite($fh, $data);
         fclose($fh);
 
@@ -93,7 +94,7 @@ class ProcessData
 
         $insertQueryValues = rtrim($insertQueryValues, ",");
 
-        $columns = sprintf("PowerPlantID_FK, %s, ImportDate", $this->columnsSetup->columnNamesInString());
+        $columns = sprintf("PowerPlantID_FK, %s", $this->columnsSetup->columnNamesInString());
 
         $query = sprintf("INSERT INTO PowerplantData(%s) VALUES %s", $columns, $insertQueryValues);
 

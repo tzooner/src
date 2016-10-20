@@ -88,7 +88,11 @@ class Response
             $response["MESSAGE"] = $this->Message;
         }
 
-        return json_encode($response);
+        $json = json_encode($response);
+        if(json_last_error() != JSON_ERROR_NONE){
+            return sprintf('JSON convert error (%s)', json_last_error_msg());
+        }
+        return $json;
 
     }
 

@@ -42,7 +42,7 @@ abstract class Database{
                                 $connectionString,
                                 $username,
                                 $password,
-                                array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION));
+                                array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION, \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''));
         }
         catch(\PDOException $ex){
             echo "Connection error: " . $ex->getMessage();

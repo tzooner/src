@@ -38,6 +38,8 @@ class ImportedValueCollection
             $index++;
         }
 
+        $this->add(new ImportedValue(++$index, "MeasurementTime", '1970-01-01 00:00:00', '2036-12-24 23:59:59', "date"));
+
     }
 
     public function add(ImportedValue $importedValue){

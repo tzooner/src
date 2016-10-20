@@ -72,7 +72,6 @@ class PowerPlantDataScript extends Script
 
                 default:
                     $result = $this->PowerPlantData->getAllData();
-                    $this->Response->setData($result);
 
             }
 
@@ -119,7 +118,7 @@ class PowerPlantDataScript extends Script
             if($powerplantID > 0) {
 
                 $filePath = sprintf("%sImport_%s/", \Config::FILE_PATH, date("Y-m"));
-                $filename = sprintf("import_%s.txt", date("Y-m-d-H-i"));
+                $filename = sprintf("import_%s.txt", date("Y-m-d-H-i-s"));
                 $Process = new ProcessData($powerplantID, $filePath, $filename);
                 $Process->saveToFile($fileData);
                 $Process->importToDatabase();

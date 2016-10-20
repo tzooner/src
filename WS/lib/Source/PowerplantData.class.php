@@ -104,25 +104,27 @@ class PowerplantData
             $where = sprintf(" AND MeasurementTime >= '%s' AND MeasurementTime <= '%s' ", $dateFrom, $dateTo);
         }
 
+        $S = new Settings();
+        $colDef = $S->getColumnsDefinitions($powerplantID);
+
+        $columns = "";
+        foreach ($colDef as $col) {
+            $columns .= sprintf("AVG(PD.%s) AS AVG_%s,", $col["ColumnName"], $col["ColumnName"]);
+            $columns .= sprintf("MIN(PD.%s) AS AVG_%s,", $col["ColumnName"], $col["ColumnName"]);
+            $columns .= sprintf("MAX(PD.%s) AS AVG_%s,", $col["ColumnName"], $col["ColumnName"]);
+        }
+
+        $columns = rtrim($columns, ",");
 
         $query = sprintf("
               SELECT
-                AVG(PD.Temp_AKU) AS AVG_Temp_AKU,
-                MIN(PD.Temp_AKU) AS MIN_Temp_AKU,
-                MAX(PD.Temp_AKU) AS MAX_Temp_AKU,
-                AVG(PD.Temp_Boiler) AS AVG_Temp_Boiler,
-                MIN(PD.Temp_Boiler) AS MIN_Temp_Boiler,
-                MAX(PD.Temp_Boiler) AS MAX_Temp_Boiler,
-                AVG(PD.Performance_Drive) AS AVG_Performance_Drive,
-                MIN(PD.Performance_Drive) AS MIN_Performance_Drive,
-                MAX(PD.Performance_Drive) AS MAX_Performance_Drive
+                %s
               FROM PowerplantData PD
               INNER JOIN Powerplant P ON PD.PowerPlantID_FK = P.PowerPlantID
               WHERE P.PowerPlantID = %d %s
-              ORDER BY P.PowerPlantID,PD.PowerPlantDataID", $powerplantID, $where);
+              ORDER BY P.PowerPlantID,PD.PowerPlantDataID", $columns, $powerplantID, $where);
 
         try {
-
             $result = @DatabaseFactory::create()->getAllRows($query);
             return $result;
         }
