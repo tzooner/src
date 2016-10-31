@@ -27,6 +27,11 @@ class SettingsScript extends Script
         if(!empty($verb)){
 
             switch($verb){
+                case "columns": // Vrati nazvy sloupcu z tabulky pro ukladani namerenych hodnot
+                    $powerPlantID = (isset($parameters[0]) ? intval($parameters[0]) : "");
+                    $result = $this->Settings->getAvailablePowerplantDataColumns($powerPlantID);
+                    $count = count($result);
+                    break;
                 case "colDef":
                     $powerPlantID = (isset($parameters[0]) ? intval($parameters[0]) : "");
                     $result = $this->Settings->getColumnsDefinitions($powerPlantID);
@@ -56,7 +61,35 @@ class SettingsScript extends Script
 
     }
 
-    public function processMethodPOST($parameters, $verb, $request){
+    public function processMethodPOST($parameters, $request){
+
+        try {
+
+//            $Validator = new PowerplantValidator();
+//            if($Validator->validate($request)){
+
+                $request = $this->Settings->saveColumnsDefinition($request);
+                if($request){
+                    $this->Response->setErrorCode(Constants::RESPONSE_CODE_NO_ERROR);
+                    $this->Response->setMessage("Uloženo");
+                }
+                else {
+                    $this->Response->setErrorCode(Constants::RESPONSE_CODE_SQL_ERROR);
+                    $this->Response->setMessage("Nepodařilo se uložit elektrárnu");
+                }
+
+//            }
+//            else{
+//                $this->Response->setErrorCode(Constants::RESPONSE_CODE_VALIDATION_FAIL);
+//                $this->Response->setMessage($Validator->getErrors());
+//            }
+
+        }
+        catch(\Exception $e){
+            $this->Response->setMessage($e->getMessage());
+        }
+
+        return $this->Response->getResponseJson();
 
     }
 

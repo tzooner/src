@@ -31,7 +31,7 @@ class GeneralHelper
      * @return string
      */
     public static function GetValueOrNull($value){
-        return (isset($value) ? $value : null);
+        return (isset($value) ? "'" . $value . "'" : null);
     }
 
     public static function HashPassword($password){

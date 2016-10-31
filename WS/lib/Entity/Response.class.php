@@ -47,7 +47,7 @@ class Response
     }
 
     public function setMessage($message){
-        $this->Message = $message;
+        $this->Message[] = $message;
     }
 
     public function setReturnedRows($rows){

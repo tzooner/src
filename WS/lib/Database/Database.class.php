@@ -9,6 +9,8 @@
 namespace lib\Database;
 
 
+use lib\misc\Logger;
+
 abstract class Database{
 
     protected $Hostname;
@@ -63,6 +65,10 @@ abstract class Database{
     public function getAllRows($query, array $parameters = array())
     {
 
+        if(\Config::IS_DEBUG) {
+            Logger::getInstance()->logError("SQL Query", $query);
+        }
+
         if(!$this->HasError) {
 
             try {
@@ -107,6 +113,10 @@ abstract class Database{
     public function getOneRow($query, array $parameters = array())
     {
 
+        if(\Config::IS_DEBUG) {
+            Logger::getInstance()->logError("SQL Query", $query);
+        }
+
         if(!$this->HasError) {
             try{
 
@@ -150,6 +160,10 @@ abstract class Database{
     public function exec($query, array $parameters = array())
     {
 
+        if(\Config::IS_DEBUG) {
+            Logger::getInstance()->logError("SQL EXEC Query", $query);
+        }
+
         if(!$this->HasError) {
             try {
 
@@ -173,6 +187,14 @@ abstract class Database{
         }
 
         return 0;
+
+    }
+
+    public function getLastInsertedId(){
+
+        $sql = "SELECT LAST_INSERT_ID() AS LastInsertedId";
+        $result = $this->getOneRow($sql);
+        return (isset($result["LastInsertedId"]) ? $result["LastInsertedId"] : "");
 
     }
 

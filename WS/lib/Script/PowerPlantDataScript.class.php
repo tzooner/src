@@ -20,14 +20,6 @@ class PowerPlantDataScript extends Script
 
     public function processMethodGET($parameters, $verb){
 
-//        if(empty($parameters)){
-//
-//            $result = $this->PowerPlantData->getAllData();
-//            $this->Response->setData($result);
-//            $this->Response->setReturnedRows(count($result));
-//
-//        }
-
 
         if(!empty($verb)){
 
@@ -67,7 +59,8 @@ class PowerPlantDataScript extends Script
                     break;
                 case "columns":
 
-                    $result = $this->PowerPlantData->getPowerplantDataColumns();
+                    $powerplantID = (isset($parameters[0]) ? $parameters[0] : "");
+                    $result = $this->PowerPlantData->getPowerplantDataColumns($powerplantID);
                     break;
 
                 default:
@@ -137,4 +130,8 @@ class PowerPlantDataScript extends Script
 
     }
 
+    public function processMethodPOST($parameters, $request)
+    {
+        // TODO: Implement processMethodPOST() method.
+    }
 }

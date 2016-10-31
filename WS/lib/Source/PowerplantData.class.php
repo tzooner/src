@@ -134,27 +134,27 @@ class PowerplantData
 
     }
 
-    public function getPowerplantDataColumns(){
+    public function getPowerplantDataColumns($powerPlantID){
 
-        $columnNames = array(
-            "Temp_AKU" => "Teplota AKU nádrže",
-            "Temp_BoilerInput" => "Teplota vstupu do kotle",
-            "Temp_DistributionInput" => "Teplota vstupu do rozvodu",
-            "Temp_Boiler" => "Teplota bojleru",
-            "Relay_BoilerPump" => "Rele cerpadlo bojleru",
-            "Relay_RadiatorPump" => "Rele cerpadlo radiatou",
-            "Relay_SwitchAKU" => "Rele stavu ventilu pri prepinani aku nadrze",
-            "Relay_SwitchBoiler" => "Rele stavu ventilu pri prepinani kotel",
-            "Relay_BoilerFlow1" => "Rele regulace prutoku kotle 1",
-            "Relay_BoilerFlow2" => "Rele regulace prutoku kotle 2",
-            "Relay_PumpFromBoiler" => "Rele cerpadlo z kotle",
-            "Relay_BoilerHeating" => "Rele topeni v kotli",
-            "Performance_Drive" => "Vykon menice (=panelu)",
-            "Performance_Network" => "Vykon ze site",
-            "Other_Optocoupler" => "Optoclen",
-        );
 
-        return $columnNames;
+        try {
+
+            $Settings = new Settings();
+            $ignoreBool = (intval($powerPlantID) > 0);
+            $result = $Settings->getColumnsDefinitions($powerPlantID);
+
+            $definition = array();
+            foreach ($result as $row) {
+                $columnName = $row["ColumnName"];
+                $columnDef = $row["Definition"];
+                $definition[$columnName] = $columnDef;
+            }
+
+            return $definition;
+        }
+        catch(\Exception $e){
+            throw new cDatabaseException();
+        }
 
     }
 

@@ -37,7 +37,7 @@ class cException extends \Exception
 
         $message = date("Y-m-d H:i:s") . " [ERROR] - " . get_class($this) . " - " . $this->getMessage() . "\n";
         $message .= $this->getTraceAsString();
-        file_put_contents(\Config::LOG_PATH, $message, FILE_APPEND);
+        file_put_contents(\Config::APP_PATH . \Config::LOG_IMPORT_NAME, $message, FILE_APPEND);
 
     }
 
