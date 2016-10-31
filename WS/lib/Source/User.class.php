@@ -32,6 +32,20 @@ class User
 
     }
 
+    public function getPowerplantUsers($powerplantID){
+
+        $query = sprintf("SELECT
+                         UserID
+                        ,Username
+                        ,Email
+                      FROM `user2powerplant` u2p
+                      INNER JOIN `user` u ON u2p.UserID_FK = u.UserID
+                      WHERE u.Deleted IS NULL AND u2p.PowerplantID_FK = %d", $powerplantID);
+
+        return @DatabaseFactory::create()->getAllRows($query);
+
+    }
+
     public function geUser($userID){
 
         $query = sprintf("SELECT

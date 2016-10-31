@@ -10,6 +10,7 @@
 namespace lib\Source;
 
 use lib\Constants;
+use lib\Database\Database;
 use lib\Database\DatabaseFactory;
 use lib\Helper\GeneralHelper;
 
@@ -38,6 +39,7 @@ class Powerplant
     public function getAllPowerPlants(){
 
         $facilities = $this->getAllFacilities();
+        $User = new User();
 
         $query = "SELECT
                   *
@@ -59,6 +61,8 @@ class Powerplant
                     }
                 }
 
+                $powerplant["Users"] = $User->getPowerplantUsers($powerPlantID);
+
                 $result[] = $powerplant;
 
             }
@@ -75,6 +79,8 @@ class Powerplant
     public function getPowerPlant($powerPlantID){
 
         $facilities = $this->getAllFacilities();
+
+        $User = new User();
 
         $query = sprintf("SELECT
                           *
@@ -100,6 +106,8 @@ class Powerplant
                         $powerplant["Facilities"][] = $facility;
                     }
                 }
+
+                $powerplant["Users"] = $User->getPowerplantUsers($powerPlantID);
 
                 $result[] = $powerplant;
 
@@ -143,6 +151,7 @@ class Powerplant
             $Users = $data["UserID_FK"];
             unset($data["UserID_FK"]);
 
+
             $sql = "INSERT INTO PowerPlant(%s) VALUES(%s)";
             $sqlColumns = "";
             $sqlValues = "";
@@ -156,7 +165,13 @@ class Powerplant
 
             $sql = sprintf($sql, $sqlColumns, $sqlValues);
             if(DatabaseFactory::create()->exec($sql) == "1"){
-                return DatabaseFactory::create()->getLastInsertedId();
+
+                $lastInsertedId = DatabaseFactory::create()->getLastInsertedId();
+
+                $this->createBindingUser2Powerplant($Users, $lastInsertedId);
+                return $lastInsertedId;
+
+
             }
 
             return false;
@@ -172,6 +187,9 @@ class Powerplant
 
         try {
 
+            $Users = $data["UserID_FK"];
+            unset($data["UserID_FK"]);
+
             $sql = "UPDATE PowerPlant SET %s WHERE PowerPlantID = %d";
             $sqlValues = "";
             foreach ($data as $columnName => $item) {
@@ -182,12 +200,31 @@ class Powerplant
 
             $sql = sprintf($sql, $sqlValues, $powerplantID);
 
-            return (DatabaseFactory::create()->exec($sql) !== false);
+            $updatePowerplantResult = (DatabaseFactory::create()->exec($sql) !== false);
+
+            DatabaseFactory::create()->exec(sprintf("DELETE FROM user2powerplant WHERE PowerPlantID_FK=%d", $powerplantID));
+            $this->createBindingUser2Powerplant($Users, $powerplantID);
+
+            return $updatePowerplantResult;
+
 
         }
         catch(\PDOException $e){
             return array();
         }
+
+    }
+
+    private function createBindingUser2Powerplant($userData, $powerplantID){
+
+        // Ulozeni vazby elektrarny na uzivatele
+        $userQuery = "INSERT INTO user2powerplant(UserID_FK, PowerPlantID_FK) VALUES";
+        foreach ($userData as $user) {
+            $userQuery .= sprintf("(%d, %d),", $user, $powerplantID);
+        }
+        $userQuery = rtrim($userQuery, ",");
+
+        return DatabaseFactory::create()->exec($userQuery);
 
     }
 
