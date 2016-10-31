@@ -26,7 +26,7 @@ class ImportedValueCollection
     public function loadColumnsDefinition($powerPlantID){
 
         $Settings = new Settings();
-        $definitions = $Settings->getColumnsDefinitions($powerPlantID);
+        $definitions = $Settings->getColumnsDefinitions($powerPlantID, false);
 
         $index = 0;
         foreach ($definitions as $def) {
@@ -38,7 +38,8 @@ class ImportedValueCollection
             $index++;
         }
 
-        $this->add(new ImportedValue(++$index, "MeasurementTime", '1970-01-01 00:00:00', '2036-12-24 23:59:59', "date"));
+//        $this->add(new ImportedValue($index, "MeasurementTime", '1970-01-01 00:00:00', '2036-12-24 23:59:59', "date"));
+        $this->add(new ImportedValue($index, "ImportDate", '1970-01-01 00:00:00', '2036-12-24 23:59:59', "date"));
 
     }
 

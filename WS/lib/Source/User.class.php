@@ -9,6 +9,7 @@
 
 namespace lib\Source;
 
+use lib\Database\Database;
 use lib\Database\DatabaseFactory;
 use lib\Helper\GeneralHelper;
 
@@ -46,7 +47,7 @@ class User
 
     }
 
-    public function geUser($userID){
+    public function getUser($userID){
 
         $query = sprintf("SELECT
                          UserID
@@ -71,6 +72,17 @@ class User
         else{   // Insert
             return $this->createUser($data);
         }
+
+    }
+
+    public function getUserIdFromUsername($username){
+
+        $username = GeneralHelper::secureString($username);
+
+        $sql = sprintf("SELECT UserID FROM `user` WHERE username='%s'", $username);
+
+        $result = DatabaseFactory::create()->getOneRow($sql);
+        return (isset($result) && intval($result) > 0 ? $result : -1);
 
     }
 

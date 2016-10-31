@@ -36,16 +36,30 @@ class Powerplant
 
     }
 
-    public function getAllPowerPlants(){
+    public function getAllPowerPlants($userID = ""){
 
         $facilities = $this->getAllFacilities();
         $User = new User();
 
-        $query = "SELECT
+        if(!empty($userID)){
+            $query = sprintf("SELECT
                   *
-                  FROM Powerplant
+                  FROM Powerplant p
+                  LEFT JOIN user2powerplant u2p ON p.PowerPlantID = u2p.PowerPlantID_FK                                   
+                  WHERE p.Deleted IS NULL AND u2p.UserID_FK = %d
+                  ORDER BY PowerPlantName", $userID);
+        }
+        else{
+
+            $query = "
+                  SELECT
+                    *
+                  FROM Powerplant                  
                   WHERE Deleted IS NULL
                   ORDER BY PowerPlantName";
+
+        }
+
 
         try {
 

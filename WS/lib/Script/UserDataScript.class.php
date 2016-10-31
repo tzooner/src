@@ -54,7 +54,7 @@ class UserDataScript extends Script
                 $userID = intval($parameters[0]);
 
                 if(isset($userID) && $userID > 0) {
-                    $result = $this->User->geUser($userID);
+                    $result = $this->User->getUser($userID);
                     $this->Response->setData($result);
                     $this->Response->setReturnedRows(count($result));
                 }

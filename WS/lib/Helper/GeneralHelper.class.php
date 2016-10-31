@@ -44,4 +44,9 @@ class GeneralHelper
 
     }
 
+    public static function secureString($input){
+        // TODO zabezpeceni pro ukladani do databaze
+        return $input;
+    }
+
 }

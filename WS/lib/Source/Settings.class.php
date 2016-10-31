@@ -33,7 +33,7 @@ class Settings
             WHERE 
                 TABLE_SCHEMA = '%s' 
                 AND TABLE_NAME = 'powerplantdata' 
-                AND COLUMN_NAME NOT IN ('PowerplantDataID','PowerPlantID_FK','MeasurementTime','ImportDate','CreateDate')
+                AND COLUMN_NAME NOT IN ('PowerplantDataID','PowerPlantID_FK','ImportDate','CreateDate')
             ORDER BY ORDINAL_POSITION", \Config::DB_Name, $powerPlantID);
 
         $allColumns =  DatabaseFactory::create()->getAllRows($queryAllCols);

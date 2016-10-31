@@ -9,6 +9,7 @@
 namespace lib\Script;
 
 use lib\Constants;
+use lib\Misc\Auth;
 use lib\Misc\ProcessData;
 use lib\validators\PowerplantValidator;
 
@@ -21,26 +22,47 @@ class PowerPlantScript extends Script
 
     public function processMethodGET($parameters, $verb){
 
-        if(empty($parameters)){
+//        $username = Auth::getBasicAuthUsername();
+//        $userID = $this->User->getUserIdFromUsername($username);
 
-            $result = $this->PowerPlant->getAllPowerPlants();
+        if(!empty($verb)){
+
+            switch($verb){
+                case "user":    // Vrati elektrarny prirazene uzivateli
+                    $userID = (isset($parameters[0]) ? $parameters[0] : "");
+                    $result = $this->PowerPlant->getAllPowerPlants($userID);
+                    $count = (count($result) > 0 ? 1 : 0);
+                    break;
+                default:
+                    $result = $this->User->getAllUsers();
+                    $count = count($result);
+
+            }
+
             $this->Response->setData($result);
-            $this->Response->setReturnedRows(count($result));
+            $this->Response->setReturnedRows($count);
 
         }
-        else{
+        else {
+            if (empty($parameters)) {
 
-            $powerplantID = intval($parameters[0]);
-
-            if(isset($powerplantID) && $powerplantID > 0) {
-                $result = $this->PowerPlant->getPowerPlant($powerplantID);
+                $result = $this->PowerPlant->getAllPowerPlants();
                 $this->Response->setData($result);
                 $this->Response->setReturnedRows(count($result));
-            }
-            else{
-                $this->Response->setMessage("No powerplant ID");
-            }
 
+            } else {
+
+                $powerplantID = intval($parameters[0]);
+
+                if (isset($powerplantID) && $powerplantID > 0) {
+                    $result = $this->PowerPlant->getPowerPlant($powerplantID);
+                    $this->Response->setData($result);
+                    $this->Response->setReturnedRows(count($result));
+                } else {
+                    $this->Response->setMessage("No powerplant ID");
+                }
+
+            }
         }
 
         return $this->Response->getResponseJson();

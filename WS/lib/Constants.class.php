@@ -28,5 +28,6 @@ class Constants
     const IMPORT_DATA_TYPE_FLOAT = "float";
     const IMPORT_DATA_TYPE_BOOL = "bool";
     const IMPORT_DATA_TYPE_STRING = "string";
+    const IMPORT_DATA_TYPE_DATE = "date";
 
 }

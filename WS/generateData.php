@@ -10,7 +10,7 @@ function rnd(){
     return number_format((float)rand()/(float)getrandmax() * 100, 2, '.', '');
 }
 
-$startTS = 1446076801;
+$startTS = time();
 echo date("Y-m-d H:i:s").'<br>';
 for($i = 1; $i <= 1000; $i++){
 
