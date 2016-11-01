@@ -10,44 +10,84 @@ session_start();
  * Date: 29.7.2015
  */
 
+use \lib\ConstantsPages;
+use \lib\AccessControl;
+
 require "Config.class.php";
 require "autoload.php";
 
 require "includes/core.php";
 
-$page = (isset($_GET["page"]) ? strtolower($_GET["page"]) : "");
+
+$page = \lib\helper\Security::secureGetPost("page", "get");
 $pageScript = "";
 
-if(!$Authorization->isLoggedIn()){
-    $pageScript = "page_login";
+$htmlError = strtolower(\lib\helper\Security::secureGetPost("err", "get"));
+switch ($htmlError){
+    case "access":
+        $Messages->addMessageError("Nemáté oprávnění pro přístup na stránku", true);
+        break;
 }
-else {
 
-    if (isset($_GET['action']) && $_GET['action'] != ''){
-        $action = $_GET['action'];
+if(isset($_POST["btnLogin"])){
 
-        switch($action){
-            case "logout":
-                $Authorization->logout();
-                break;
-        }
+    $username = \lib\helper\URL::getParameter("txtUsername", "post");
+    $password = \lib\helper\URL::getParameter("txtPassword", "post");
+
+    if($Authorization->loginUser($username, $password)){
+
+        \lib\helper\URL::redirect("home");
+
+    }
+    else{
+
+        $Messages->addMessageError("Nesprávné uživatelské jméno nebo heslo");
 
     }
 
-    switch ($page) {
-        case "home":
-            $pageScript = "page_home";
-            break;
-        case "powerplant":
-            $pageScript = "page_powerplant";
-            break;
-        case "powerplant_new":
-            $pageScript = "page_powerplant_new";
-            break;
-        default:
-            $pageScript = "page_home";
+}
+
+if (isset($_GET['action']) && $_GET['action'] != ''){
+    $action = $_GET['action'];
+
+    switch($action){
+        case "logout":
+            $Authorization->logout();
             break;
     }
+
+}
+
+switch ($page) {
+    case ConstantsPages::URL_HOME:
+        $pageScript = ConstantsPages::FILE_HOME;
+        break;
+    case ConstantsPages::URL_POWERPLANT:
+        $pageScript = ConstantsPages::FILE_POWERPLANT;
+        break;
+    case ConstantsPages::URL_POWERPLANT_NEW:
+        $pageScript = ConstantsPages::FILE_POWERPLANT_EDIT;
+        break;
+    case ConstantsPages::URL_POWERPLANT_EDIT:
+        $pageScript = ConstantsPages::FILE_POWERPLANT_EDIT;
+        break;
+    case ConstantsPages::URL_USERS_LIST:
+        $pageScript = ConstantsPages::FILE_USERS_LIST;
+        break;
+    case ConstantsPages::URL_USERS_NEW:
+        $pageScript = ConstantsPages::FILE_USERS_EDIT;
+        break;
+    case ConstantsPages::URL_USERS_EDIT:
+        $pageScript = ConstantsPages::FILE_USERS_EDIT;
+        break;
+    default:
+        $pageScript = ConstantsPages::FILE_UNKNOWN;
+        break;
+}
+
+// Pokud uzivatel nema na stranku pristup, tak je presmerovan na uvodni
+if(!AccessControl::getInstance()->hasAccess($pageScript, $Authorization::getUserRole())) {
+    \lib\helper\URL::redirect(ConstantsPages::URL_HOME, "", array("err" => "access"));
 }
 
 require_once "includes/html_header.php";

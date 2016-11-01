@@ -93,11 +93,11 @@ class CURL {
 
         if($data != ''){
             curl_setopt($s,CURLOPT_POST, true);
-            curl_setopt($s,CURLOPT_POSTFIELDS, $data);
+            curl_setopt($s,CURLOPT_POSTFIELDS, http_build_query($data));    // http_build_query rozlozi vicedimenzionalni pole na string
         }
 
         curl_setopt($s,CURLOPT_URL, $curlURL);
-        curl_setopt($s,CURLOPT_HTTPHEADER,array('Expect:'));
+//        curl_setopt($s,CURLOPT_HTTPHEADER,array("Content-type: multipart/form-data"));
         curl_setopt($s,CURLOPT_TIMEOUT, $this->_timeout);
         curl_setopt($s,CURLOPT_MAXREDIRS, $this->_maxRedirects);
         curl_setopt($s,CURLOPT_RETURNTRANSFER, true);

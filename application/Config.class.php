@@ -19,6 +19,7 @@ class ConfigGeneral {
     const FORMAT_DATE_DATABASE = "Y-m-d";
     const DISPLAY_ERROR_MESSAGES = true;
     const APP_PATH = "C:/xampp/htdocs/solar_monitor/application/";
+    const LOG_NAME = "LOG.txt";
 
 }
 

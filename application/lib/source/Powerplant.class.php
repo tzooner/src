@@ -8,8 +8,11 @@
 
 namespace lib\source;
 
+use lib\Authorization;
 use lib\Constants;
+use lib\ErrorCodes;
 use lib\helper\Response;
+use lib\webservice\CURL;
 use lib\webservice\WebService;
 
 class Powerplant{
@@ -20,9 +23,16 @@ class Powerplant{
         $this->Webservice = $webService;
     }
 
-    public function GetAllPowerPlantData(){
+    public function GetAllPowerPlant(){
 
-        $data = $this->Webservice->callMethod(Constants::WS_URL_POWERPLANT);
+
+        if(Authorization::isUserAdmin()) {
+            $data = $this->Webservice->callMethod(Constants::WS_URL_POWERPLANT);
+        }
+        else{
+            $url = sprintf("%s/user/%d", Constants::WS_URL_POWERPLANT, Authorization::getUserID());
+            $data = $this->Webservice->callMethod($url);
+        }
         return Response::getData($data);
 
     }
@@ -76,16 +86,54 @@ class Powerplant{
 
     }
 
+    public function GetDataSimpleOverview($dateFrom, $dateTo){
+
+        $url = sprintf("%s/overview/%s/%s", Constants::WS_URL_POWERPLANT, $dateFrom, $dateTo);
+        $url = sprintf("%s/overview/%s/%s", Constants::WS_URL_POWERPLANT, "", "");
+        $data = $this->Webservice->callMethod($url);
+        return Response::getData($data);
+
+    }
+
     /**
      * Vrati nazvy sloupcu tabulky, kam se ukladani namerene hodnoty
      * @return array
      */
-    public function GetColumns(){
+    public function GetColumns($powerPlantID){
 
-        $url = sprintf("%s/columns", Constants::WS_URL_POWERPLANT_DATA);
+        $url = sprintf("%s/columns/%d", Constants::WS_URL_POWERPLANT_DATA, $powerPlantID);
 
         $data = $this->Webservice->callMethod($url);
         return Response::getData($data);
+
+    }
+
+    public function SavePowerPlant($powerPlantID, $data){
+
+        $url = sprintf("%s/%d", Constants::WS_URL_POWERPLANT, $powerPlantID);
+        $response = $this->Webservice->callMethod($url, $data, CURL::REQUEST_TYPE_POST);;
+        $errorCode = Response::getErrorCode($response);
+
+        if($errorCode != ErrorCodes::WS_NO_ERROR){
+            return Response::getMessage($response);
+        }
+        return (!empty($powerPlantID) ? $powerPlantID : Response::getInsertedId($response));
+
+    }
+
+    public function DeletePowerplant($powerplantID){
+
+        if(Authorization::isUserAdmin()){
+
+            $methodURL = sprintf('%s/%d', Constants::WS_URL_POWERPLANT, $powerplantID);
+            $result = $this->Webservice->callMethod($methodURL, '', CURL::REQUEST_TYPE_DELETE);
+
+            return Response::getErrorCode($result);
+
+        }
+        else{
+            return ErrorCodes::WS_AUTHORIZATION_FAILED;
+        }
 
     }
 

@@ -14,7 +14,7 @@ class Log {
     private $File;
 
     private function __construct(){
-        $filePath = \ConfigPaths::APPLICATION_PATH . \ConfigPaths::LOG_FILE;
+        $filePath = \ConfigGeneral::APP_PATH . \ConfigGeneral::LOG_NAME;
         $this->File = new File($filePath);
     }
 

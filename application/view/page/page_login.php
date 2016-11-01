@@ -18,7 +18,7 @@ if(isset($_POST["btnLogin"])){
     }
     else{
 
-        echo 'fail';
+        $Messages->addMessageError("Nesprávné uživatelské jméno nebo heslo");
 
     }
 
@@ -33,15 +33,21 @@ if(isset($_POST["btnLogin"])){
         <form method="post" action="" class="form-group">
             <div class="form-group">
                 <label for="txtUsername">Uživatelské jméno</label>
-                <input type="text" class="form-control input-lg" name="txtUsername" id="txtUsername" placeholder="Username">
+                <input type="text" class="form-control input-lg" name="txtUsername" id="txtUsername">
             </div>
             <div class="form-group">
                 <label for="txtPassword">Heslo</label>
-                <input type="password" class="form-control input-lg" name="txtPassword" id="txtPassword" placeholder="Password">
+                <input type="password" class="form-control input-lg" name="txtPassword" id="txtPassword">
             </div>
-            <button type="submit" class="btn btn-default btn-lg" name="btnLogin">Přihlásit se</button>
+            <button type="submit" class="btn btn-default btn-lg btn-block" name="btnLogin">Přihlásit se</button>
         </form>
 
     </div>
 
+</div>
+
+<div class="row">
+    <div class="col-lg-8 col-lg-offset-2">
+        <?php echo $Messages->getMessagesHTML(); ?>
+    </div>
 </div>

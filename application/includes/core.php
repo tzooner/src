@@ -12,7 +12,12 @@ use \lib\Authorization;
 use \lib\webservice\URL;
 use \lib\webservice\CURL;
 use \lib\webservice\WebService;
+use \lib\AccessControl;
+use \lib\ConstantsPages;
+use \lib\source\Users;
 
+// Zasobnik zprav pro celou aplikaci
+$Messages = \lib\misc\Message\MessagesStack::getInstance();
 
 define('ROOT_DIR', str_replace("includes","",dirname(__FILE__)));
 define('SESSION_ID', session_id());
@@ -25,22 +30,22 @@ $urlPassword = '';
 // For the first time, we generate URL for basic authentication from POST action in logging of user
 // From POST data is get username and password which is used to generate URL
 // After success login is username and password get from session
-if(isset($_POST['username']) && isset($_POST['password'])){
+if(isset($_POST['btnLogin'])){
 
-    $urlUsername = $_POST['username'];
-    $urlPassword = $_POST['password'];
-
-}
-elseif(isset($_SESSION['AUTHORIZATION']['USERNAME']) && isset($_SESSION['AUTHORIZATION']['PASSWORD'])){
-
-    $urlUsername = $_SESSION['AUTHORIZATION']['USERNAME'];
-    $urlPassword = $_SESSION['AUTHORIZATION']['PASSWORD'];
+    $urlUsername = $_POST['txtUsername'];
+    $urlPassword = $_POST['txtPassword'];
 
 }
+elseif(!empty(Authorization::getUsername()) && !empty(Authorization::getPassword())){
 
-$urlUsername = 'tomas';
-$urlPassword = 'heslo123';
+    $urlUsername = Authorization::getUsername();
+    $urlPassword = Authorization::getPassword();
 
+}
+else if(!Authorization::isLoggedIn()){
+    $urlUsername = Authorization::getReadonlyUsername();
+    $urlPassword = Authorization::getReadonlyPassword();
+}
 $URL->setURL($urlUsername, $urlPassword);
 
 $CURL = new CURL($URL->getURL());
@@ -49,4 +54,6 @@ $WebService = new WebService($CURL);
 
 $Authorization = new Authorization($WebService);
 
-$messages = "";
+AccessControl::getInstance()->addDeniedAccess(ConstantsPages::FILE_POWERPLANT_EDIT, Users::ROLE_USER);
+AccessControl::getInstance()->addDeniedAccess(ConstantsPages::FILE_USERS_LIST, Users::ROLE_USER);
+AccessControl::getInstance()->addDeniedAccess(ConstantsPages::FILE_USERS_EDIT, Users::ROLE_USER);

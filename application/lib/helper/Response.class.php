@@ -11,6 +11,8 @@
 namespace lib\helper;
 
 
+use lib\ErrorCodes;
+
 class Response {
 
     public static function getData($input, $onlyFirstRow = false){
@@ -30,6 +32,46 @@ class Response {
         }
 
         return array();
+
+    }
+
+    public static function getMessage($input, $onlyFirstRow = false){
+
+        if(isset($input['MESSAGE'])){
+
+            if($onlyFirstRow){
+                if(isset($input['MESSAGE'][0])){
+                    return $input['MESSAGE'][0];
+                }
+                else{
+                    array();
+                }
+            }
+
+            return $input['MESSAGE'];
+        }
+
+        return array();
+
+    }
+
+    public static function getInsertedId($input){
+
+        if(isset($input['LAST_INSERT_ID'])){
+            return $input['LAST_INSERT_ID'];
+        }
+        else{
+            array();
+        }
+
+    }
+
+    public static function getErrorCode($input){
+
+        if(isset($input['ERROR_CODE'])){
+            return $input['ERROR_CODE'];
+        }
+        return ErrorCodes::WS_UNKNOWN_ERROR;
 
     }
 

@@ -121,28 +121,22 @@ class UserDataScript extends Script
      */
     public function processMethodPUT($parameters, $fileData){
 
-        try {
-            $powerplantID = (isset($parameters[0]) ? $parameters[0] : 0);
 
-            if($powerplantID > 0) {
 
-                $filePath = sprintf("%sImport_%s/", \Config::FILE_PATH, date("Y-m"));
-                $filename = sprintf("import_%s.txt", date("Y-m-d-H-i"));
-                $Process = new ProcessData($filePath, $filename);
-                $Process->saveToFile($fileData);
-                $Process->importToDatabase($powerplantID);
+    }
 
-            }
-            else{
-                return "No powerplant ID in URL";
-            }
+    public function processMethodDELETE($parameters){
 
+        $userID = (isset($parameters[0]) ? intval($parameters[0]) : 0);
+        if($userID > 0) {
+            $this->User->deleteUser($userID);
         }
-        catch(\Exception $e){
-
+        else{
+            $this->Response->setErrorCode(Constants::RESPONSE_CODE_MISSING_PARAMETERS);
+            $this->Response->setMessage("Nepodařilo se získat ID uživatele");
         }
 
-        return date("Y-m-d H:i:s");
+        return $this->Response->getResponseJson();
 
     }
 

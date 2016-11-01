@@ -162,11 +162,23 @@ class User
                         ,r.Description AS RoleDescription
                       FROM `user` u
                       INNER JOIN Role r ON u.RoleID_FK = r.RoleID
-                      WHERE username='%s' AND password='%s'",
+                      WHERE username='%s' AND password='%s' and deleted IS NULL",
             $username, $password);
 
             $result = @DatabaseFactory::create()->getOneRow($query);
             return $result;
+
+    }
+
+    public function deleteUser($userID, $softDelete = true){
+
+        if($softDelete) {
+            $sql = sprintf("UPDATE `user` SET deleted = CURRENT_TIMESTAMP WHERE `UserID` = %d", $userID);
+        }
+        else{
+            $sql = sprintf("DELETE FROM `user` WHERE `UserID` = %d", $userID);
+        }
+        return DatabaseFactory::create()->exec($sql);
 
     }
 

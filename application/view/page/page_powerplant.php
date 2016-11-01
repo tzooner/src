@@ -11,7 +11,7 @@ use \lib\helper\DateTime;
 use \lib\source\Powerplant;
 
 // ### Parametry
-$id = URL::getParameter("id", "get");
+$PowerPlantID = intval(URL::getParameter("id", "get"));
 $columnName = URL::getParameter("column", "get");
 $dateFrom = URL::getParameter("dateFrom", "get");
 $dateTo = URL::getParameter("dateTo", "get");
@@ -40,24 +40,24 @@ $actualDateFrom_formatted = DateTime::formatDate($dateFrom, "d.m.Y H:i");
 $dateTo_formatted = DateTime::formatDate($dateTo, "d.m.Y H:i");
 
 // ### Odkazy pro tlacitka prepinajici rozsah dat
-$actualURL = "index.php?page=powerplant&id=" . $id;
+$actualURL = "index.php?page=powerplant&id=" . $PowerPlantID;
 $dayRangeLink = $actualURL . sprintf("&dateFrom=%s&dateTo=%s", $dayRange_from, $dayRange_to);
 $weekRangeLink = $actualURL . sprintf("&dateFrom=%s&dateTo=%s", $weekRange_from, $weekRange_to);
 $monthRangeLink = $actualURL . sprintf("&dateFrom=%s&dateTo=%s", $monthRange_from, $monthRange_to);
 
 // ### Obrazek grafu
 $graph_image = sprintf("<img src='view/page/graphs_images/image_basicGraph.php?id=%d&dateFrom=%s&dateTo=%s%s' alt='Graf naměřených hodnot z období %s až %s'>"
-    , $id, $dateFrom, $dateTo, $graphSettings, $actualDateFrom_formatted, $dateTo_formatted);
+    , $PowerPlantID, $dateFrom, $dateTo, $graphSettings, $actualDateFrom_formatted, $dateTo_formatted);
 
 
 
 // ### Nacteni dat
 $Powerplant = new Powerplant($WebService);
-$dataOverview = $Powerplant->GetDataOverview($id, $dateFrom, $dateTo);
-$columnsDefinition = $Powerplant->GetColumns();
+$dataOverview = $Powerplant->GetDataOverview($PowerPlantID, $dateFrom, $dateTo);
+$columnsDefinition = $Powerplant->GetColumns($PowerPlantID);
 
 // vybrane hodnoty pro zobrazeni v grafu
-$detail = $Powerplant->GetPowerPlantData($id);
+$detail = $Powerplant->GetPowerPlantData($PowerPlantID);
 
 ?>
 
@@ -78,7 +78,7 @@ $detail = $Powerplant->GetPowerPlantData($id);
                     <form action="" method="get" id="frmSetGraph" style="margin: 0">
 
                         <input type="hidden" name="page" value="powerplant"/>
-                        <input type="hidden" name="id" value="<?php echo $id; ?>"/>
+                        <input type="hidden" name="id" value="<?php echo $PowerPlantID; ?>"/>
 
                         <div class="row">
 
@@ -197,6 +197,11 @@ $detail = $Powerplant->GetPowerPlantData($id);
         <div class="panel panel-info">
             <div class="panel-heading">
                 Informace o elektrárně
+                <?php
+                if(\lib\Authorization::isUserAdmin()){
+                    echo sprintf('<a href="index.php?page=powerplant_edit&id=%d"><span class="glyphicon glyphicon-pencil text-warning pull-right"></span></a>', $PowerPlantID);
+                }
+                ?>
             </div>
             <div class="panel-body">
 

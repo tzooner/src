@@ -44,7 +44,9 @@ class Authorization {
 
                 $_SESSION['AUTH'] = array(
                     'logged' => true,
+                    'userID' => $data["UserID"],
                     'username' => $username,
+                    'password' => $password,
                     'role' => $data["RoleName"]
                 );
 
@@ -70,12 +72,36 @@ class Authorization {
 
     }
 
-    public function isLoggedIn(){
+    public static function isLoggedIn(){
         return General::isSetOrEmpty(@$_SESSION["AUTH"]["logged"]);
     }
 
-    public function isUserAdmin(){
+    public static function isUserAdmin(){
         return (strtolower(General::isSetOrEmpty(@$_SESSION["AUTH"]["role"])) == Constants::ROLE_ADMIN);
+    }
+
+    public static function getUsername(){
+        return General::isSetOrEmpty(@$_SESSION["AUTH"]["username"]);
+    }
+
+    public static function getPassword(){
+        return General::isSetOrEmpty(@$_SESSION["AUTH"]["password"]);
+    }
+
+    public static function getReadonlyUsername(){
+        return "readonly";
+    }
+
+    public static function getReadonlyPassword(){
+        return "readonly";
+    }
+
+    public static function getUserRole(){
+        return General::isSetOrEmpty(@$_SESSION["AUTH"]["role"]);
+    }
+
+    public static function getUserID(){
+        return General::isSetOrEmpty(@$_SESSION["AUTH"]["userID"]);
     }
 
 } 

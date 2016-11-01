@@ -33,6 +33,12 @@ class PowerPlantScript extends Script
                     $result = $this->PowerPlant->getAllPowerPlants($userID);
                     $count = (count($result) > 0 ? 1 : 0);
                     break;
+                case "overview":    // Vrati elektrarny prirazene uzivateli
+                    $dateFrom = (isset($parameters[0]) ? $parameters[0] : "");
+                    $dateTo = (isset($parameters[1]) ? $parameters[1] : "");
+                    $result = $this->PowerPlant->getPowerplantSimpleOverview($dateFrom, $dateTo);
+                    $count = count($result);
+                    break;
                 default:
                     $result = $this->User->getAllUsers();
                     $count = count($result);
@@ -107,6 +113,22 @@ class PowerPlantScript extends Script
         catch(\Exception $e){
 
         }
+
+    }
+
+    public function processMethodDELETE($parameters)
+    {
+
+        $powerplantID = (isset($parameters[0]) ? intval($parameters[0]) : 0);
+        if($powerplantID > 0) {
+            $this->PowerPlant->delete($powerplantID);
+        }
+        else{
+            $this->Response->setErrorCode(Constants::RESPONSE_CODE_MISSING_PARAMETERS);
+            $this->Response->setMessage("Nepodařilo se získat ID elektrárny");
+        }
+
+        return $this->Response->getResponseJson();
 
     }
 

@@ -103,6 +103,14 @@ class Settings
 
     }
 
+    /**
+     * Vrati definice sloupcu urcenych pro zaznamenavani vykonu
+     */
+    public function getPowerColumnDefinitions(){
+        $query = "SELECT * FROM v_columnsDefinition WHERE ColumnName like 'Power%' ORDER BY `PowerplantID`, `ColumnName`";
+        return @DatabaseFactory::create()->getAllRows($query);
+    }
+
     public function saveColumnsDefinition($data){
 
         try {

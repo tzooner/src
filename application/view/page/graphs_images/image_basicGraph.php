@@ -1,4 +1,5 @@
 <?php
+session_start();    // Musi byt zde, protoze se zde nepouzije session_start() z indexu
 /**
  * Created by PhpStorm.
  * User: tomas

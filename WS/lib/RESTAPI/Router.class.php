@@ -51,6 +51,9 @@ class Router extends REST{
             case "post":
                 return $Script->processMethodPOST($this->Parameters, $this->Request);
                 break;
+            case "delete":
+                return $Script->processMethodDELETE($this->Parameters);
+                break;
             default:
                 return "Unsupported method";
         }
@@ -68,6 +71,9 @@ class Router extends REST{
                 return $Script->processMethodPOST($this->Parameters, $this->Request);
             case "put":
                 return $Script->processMethodPUT($this->Parameters, $this->File);
+                break;
+            case "delete":
+                return $Script->processMethodDELETE($this->Parameters);
                 break;
             default:
                 return "Unsupported method";

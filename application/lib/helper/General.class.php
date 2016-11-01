@@ -14,7 +14,10 @@ namespace lib\helper;
 class General {
 
     public static function isSetOrEmpty($var){
-        return (isset($var) ? $var : "");
+        if(is_string($var)) {
+            return (isset($var) ? htmlspecialchars($var) : "");
+        }
+        return $var;
     }
 
     /**
@@ -25,7 +28,7 @@ class General {
     public static function ifNullZero($input){
 
         if(isset($input) && !empty($input)){
-            return $input;
+            return htmlspecialchars($input);
         }
 
         return 0;
