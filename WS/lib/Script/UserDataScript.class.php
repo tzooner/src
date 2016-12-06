@@ -59,7 +59,7 @@ class UserDataScript extends Script
                     $this->Response->setReturnedRows(count($result));
                 }
                 else{
-                    $this->Response->setMessage("No powerplant ID");
+                    $this->Response->setMessage("No user ID");
                 }
 
             }
@@ -103,12 +103,13 @@ class UserDataScript extends Script
                 $this->Response->setMessage($Validator->getErrors());
             }
 
-            return $this->Response->getResponseJson();
-
         }
         catch(\Exception $e){
-
+            $this->Response->setErrorCode(Constants::RESPONSE_CODE_SQL_ERROR);
+            $this->Response->setMessage($e->getMessage());
         }
+
+        return $this->Response->getResponseJson();
 
     }
 
@@ -119,9 +120,42 @@ class UserDataScript extends Script
      * @param $fileData
      * @return bool|string
      */
-    public function processMethodPUT($parameters, $fileData){
+    public function processMethodPUT($parameters, $request){
 
+        try {
 
+            $userID = (isset($parameters[0]) ? $parameters[0] : "");
+
+            if(intval($userID) <= 0){
+                $this->Response->setErrorCode(Constants::RESPONSE_CODE_MISSING_PARAMETERS);
+                $this->Response->setMessage("Nepodařilo se aktualizovat uživatele. Chybí ID.");
+            }
+            else {
+                $Validator = new UserValidator();
+                if ($Validator->validate($request, intval($userID) > 0)) {
+
+                    $id = $this->User->save($request, $userID);
+                    if ($id) {
+                        $this->Response->setLastInsertID($id);
+                    } else {
+                        $this->Response->setLastInsertID(0);
+                        $this->Response->setErrorCode(Constants::RESPONSE_CODE_SQL_ERROR);
+                        $this->Response->setMessage("Nepodařilo se uložit uživatele");
+                    }
+
+                } else {
+                    $this->Response->setErrorCode(Constants::RESPONSE_CODE_VALIDATION_FAIL);
+                    $this->Response->setMessage($Validator->getErrors());
+                }
+            }
+
+        }
+        catch(\Exception $e){
+            $this->Response->setErrorCode(Constants::RESPONSE_CODE_SQL_ERROR);
+            $this->Response->setMessage($e->getMessage());
+        }
+
+        return $this->Response->getResponseJson();
 
     }
 

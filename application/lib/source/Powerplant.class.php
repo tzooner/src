@@ -89,7 +89,7 @@ class Powerplant{
     public function GetDataSimpleOverview($dateFrom, $dateTo){
 
         $url = sprintf("%s/overview/%s/%s", Constants::WS_URL_POWERPLANT, $dateFrom, $dateTo);
-        $url = sprintf("%s/overview/%s/%s", Constants::WS_URL_POWERPLANT, "", "");
+//        $url = sprintf("%s/overview/%s/%s", Constants::WS_URL_POWERPLANT, "", "");
         $data = $this->Webservice->callMethod($url);
         return Response::getData($data);
 

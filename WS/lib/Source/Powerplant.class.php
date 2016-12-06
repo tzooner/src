@@ -22,7 +22,7 @@ class Powerplant
 
         $query = "SELECT
                   *
-                  FROM Facility
+                  FROM facility
                   ORDER BY FacilityName";
 
         try {
@@ -44,7 +44,7 @@ class Powerplant
         if(!empty($userID)){
             $query = sprintf("SELECT
                   *
-                  FROM Powerplant p
+                  FROM powerplant p
                   LEFT JOIN user2powerplant u2p ON p.PowerPlantID = u2p.PowerPlantID_FK                                   
                   WHERE p.Deleted IS NULL AND u2p.UserID_FK = %d
                   ORDER BY PowerPlantName", $userID);
@@ -54,7 +54,7 @@ class Powerplant
             $query = "
                   SELECT
                     *
-                  FROM Powerplant                  
+                  FROM powerplant                  
                   WHERE Deleted IS NULL
                   ORDER BY PowerPlantName";
 
@@ -166,7 +166,7 @@ class Powerplant
         $query = sprintf("SELECT
                           *
                           FROM
-                            Powerplant
+                            powerplant
                           WHERE
                             PowerPlantID = %d AND Deleted IS NULL
                           ORDER BY
@@ -271,7 +271,7 @@ class Powerplant
             $Users = $data["UserID_FK"];
             unset($data["UserID_FK"]);
 
-            $sql = "UPDATE PowerPlant SET %s WHERE PowerPlantID = %d";
+            $sql = "UPDATE powerplant SET %s WHERE PowerPlantID = %d";
             $sqlValues = "";
             foreach ($data as $columnName => $item) {
                 $value = GeneralHelper::GetValueOrNull($item);

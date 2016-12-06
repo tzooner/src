@@ -14,7 +14,7 @@ use lib\Entity\Response;
 use lib\Source\PowerplantData;
 use lib\Source\Powerplant;
 use lib\Source\Role;
-use lib\source\User;
+use lib\Source\User;
 
 abstract class Script{
 

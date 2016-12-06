@@ -12,7 +12,7 @@ class Config
     const APP_PATH = "C:/xampp/htdocs/solar_monitor/ws/";
 
     const DB_Host = "localhost";
-    const DB_Name = "solar_monitor_v2";
+    const DB_Name = "solar_monitor_v3";
     const DB_Username = "root";
     const DB_Password = "";
     const DB_Type = "mysql";

@@ -85,6 +85,8 @@ class CURL {
             return;
         }
 
+//        echo $curlURL;
+
         if($requestType != ''){
             curl_setopt($s,CURLOPT_CUSTOMREQUEST, $requestType);
         }

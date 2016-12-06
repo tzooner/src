@@ -31,8 +31,8 @@ class PowerplantData
                 PD.*,
                 P.PowerPlantID,
                 P.PowerPlantName
-              FROM PowerplantData PD
-              INNER JOIN Powerplant P ON PD.PowerPlantID_FK = P.PowerPlantID
+              FROM powerplantdata PD
+              INNER JOIN powerplant P ON PD.PowerPlantID_FK = P.PowerPlantID
               ORDER BY P.PowerPlantID,PD.PowerPlantDataID
               ";
 
@@ -78,8 +78,8 @@ class PowerplantData
         $query = sprintf("
               SELECT
                 %s
-              FROM PowerplantData PD
-              INNER JOIN Powerplant P ON PD.PowerPlantID_FK = P.PowerPlantID
+              FROM powerplantdata PD
+              INNER JOIN powerplant P ON PD.PowerPlantID_FK = P.PowerPlantID
               WHERE P.PowerPlantID = %d %s
               ORDER BY P.PowerPlantID,PD.PowerPlantDataID", $columns, $powerplantID, $where);
 
@@ -119,8 +119,8 @@ class PowerplantData
         $query = sprintf("
               SELECT
                 %s
-              FROM PowerplantData PD
-              INNER JOIN Powerplant P ON PD.PowerPlantID_FK = P.PowerPlantID
+              FROM powerplantdata PD
+              INNER JOIN powerplant P ON PD.PowerPlantID_FK = P.PowerPlantID
               WHERE P.PowerPlantID = %d %s
               ORDER BY P.PowerPlantID,PD.PowerPlantDataID", $columns, $powerplantID, $where);
 
@@ -162,7 +162,7 @@ class PowerplantData
         // Import je uspesny, pokud nenastanou chyby
         $isSuccess = (empty($errors) ? 1 : 0);
 
-        $query = sprintf("INSERT INTO ImportLog(ImportDate, WasSuccess, ImportedRows, ImportErrors, ImportWarnings, IP) VALUES('%s', %d, %d, '%s', '%s', '%s')",
+        $query = sprintf("INSERT INTO importlog(ImportDate, WasSuccess, ImportedRows, ImportErrors, ImportWarnings, IP) VALUES('%s', %d, %d, '%s', '%s', '%s')",
             $importDate, $isSuccess, $importedRows, $errors, $warnings, $ipAddress);
 
         return (@DatabaseFactory::create()->exec($query) == 1);

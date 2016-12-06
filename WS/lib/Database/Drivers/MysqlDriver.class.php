@@ -14,17 +14,18 @@ use \Config;
 
 class MysqlDriver extends Database{
 
+	private static $Instance = null;
+
     protected function __construct($hostname, $dbName, $username, $password, $dbType){
         parent::__construct($hostname, $dbName, $username, $password, $dbType);
     }
 
     public static function getInstance(){
 
-        static $Instance = null;
-        if ($Instance === null) {
-            $Instance = new MysqlDriver(\Config::DB_Host, \Config::DB_Name, \Config::DB_Username, \Config::DB_Password, "mysql");
+        if (self::$Instance === null) {
+            self::$Instance = new MysqlDriver(\Config::DB_Host, \Config::DB_Name, \Config::DB_Username, \Config::DB_Password, "mysql");
         }
-        return $Instance;
+        return self::$Instance;
 
     }
 

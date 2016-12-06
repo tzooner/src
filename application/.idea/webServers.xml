@@ -3,7 +3,7 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="f495d8b6-1aa2-4089-b582-32e931e8d4f5" name="SolarMonitorApp" url="http://localhost/solar_monitor/application">
-        <fileTransfer port="0" mountedRoot="C:\xampp\htdocs\solar_monitor\application" accessType="MOUNT" />
+        <fileTransfer mountedRoot="C:\xampp\htdocs\solar_monitor\application" accessType="MOUNT" />
       </webServer>
     </option>
   </component>

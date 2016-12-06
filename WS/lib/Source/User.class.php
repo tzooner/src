@@ -26,7 +26,7 @@ class User
                         ,r.Name AS RoleName
                         ,r.Description AS RoleDescription
                       FROM `user` u
-                      INNER JOIN Role r ON u.RoleID_FK = r.RoleID
+                      INNER JOIN role r ON u.RoleID_FK = r.RoleID
                       WHERE u.Deleted IS NULL
                       ORDER BY UserID";
         return @DatabaseFactory::create()->getAllRows($query);
@@ -57,7 +57,7 @@ class User
                         ,r.Name AS RoleName
                         ,r.Description AS RoleDescription
                       FROM `user` u
-                      INNER JOIN Role r ON u.RoleID_FK = r.RoleID
+                      INNER JOIN role r ON u.RoleID_FK = r.RoleID
                       WHERE u.Deleted IS NULL AND u.UserID = %d", $userID);
 
         return @DatabaseFactory::create()->getOneRow($query);
@@ -161,7 +161,7 @@ class User
                         ,r.Name AS RoleName
                         ,r.Description AS RoleDescription
                       FROM `user` u
-                      INNER JOIN Role r ON u.RoleID_FK = r.RoleID
+                      INNER JOIN role r ON u.RoleID_FK = r.RoleID
                       WHERE username='%s' AND password='%s' and deleted IS NULL",
             $username, $password);
 

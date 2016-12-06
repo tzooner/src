@@ -18,7 +18,7 @@ class Role
 
     public function getAllRoles(){
 
-        $query = "SELECT * FROM Role ORDER BY NAME";
+        $query = "SELECT * FROM role ORDER BY NAME";
         return @DatabaseFactory::create()->getAllRows($query);
 
     }
